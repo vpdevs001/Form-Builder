@@ -18,3 +18,5 @@ export const fieldTypeEnum = pgEnum("field_type", [
   "RATING",
   "DATE",
 ]);
+
+export const themeEnum = pgEnum("theme", ["Naruto", "Death Note", "Attack On Titan"]);

@@ -41,9 +41,9 @@ export const forms = pgTable("forms", {
   // Shown after successful submission
   thankYouMessage: text("thank_you_message").default("Thank you for your response!"),
 
-  // Theme config stored as JSON string (avoids a whole extra table)
-  // e.g. { "name": "cyberpunk", "primaryColor": "#00fff0", "bgColor": "#0d0d0d" }
-  themeConfig: text("theme_config"),
+// Theme selection (Naruto, Death Note, Attack On Titan)
+  // Stored as a simple string identifier
+  theme: varchar("theme", { length: 30 }).notNull().default("Naruto"),
 
   // Email notification toggles
   notifyCreator: boolean("notify_creator").default(true).notNull(),
