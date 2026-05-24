@@ -1,28 +1,19 @@
-import { randomUUID } from "crypto";
 import { hash, compare } from "bcryptjs";
 import { db } from "@repo/database";
 import { eq } from "drizzle-orm";
 import { refreshTokens, users, type User } from "@repo/database/schema";
-
-const REFRESH_TOKEN_LIFETIME_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
-
-export type UserPublic = Omit<User, "passwordHash" | "createdAt" | "updatedAt"> & {
-  createdAt: string;
-  updatedAt: string;
-};
-
-function toPublicUser(user: User): UserPublic {
-  const { passwordHash, createdAt, updatedAt, ...publicUser } = user;
-  return {
-    ...publicUser,
-    createdAt: createdAt.toISOString(),
-    updatedAt: updatedAt.toISOString(),
-  };
-}
-
-function generateRefreshToken() {
-  return randomUUID();
-}
+import { ACCESS_TOKEN_LIFETIME_MS, REFRESH_TOKEN_LIFETIME_MS } from "./constants";
+import { createAccessToken, createRefreshToken, verifyRefreshToken } from "./jwt";
+import { toPublicUser } from "./utils";
+import type {
+  AuthPayload,
+  ChangePasswordInput,
+  ChangeUserDetailsInput,
+  LoginInput,
+  RefreshTokenInput,
+  RegisterInput,
+  UserPublic,
+} from "./types";
 
 class UserService {
   public async register({
@@ -30,12 +21,7 @@ class UserService {
     firstName,
     lastName,
     password,
-  }: {
-    email: string;
-    firstName: string;
-    lastName?: string;
-    password: string;
-  }): Promise<UserPublic> {
+  }: RegisterInput): Promise<UserPublic> {
     const existingUser = await db.select().from(users).where(eq(users.email, email));
 
     if (existingUser.length > 0) {
@@ -60,13 +46,7 @@ class UserService {
     return toPublicUser(createdUser);
   }
 
-  public async login({
-    email,
-    password,
-  }: {
-    email: string;
-    password: string;
-  }): Promise<{ user: UserPublic; refreshToken: string; refreshTokenExpiresAt: string }> {
+  public async login({ email, password }: LoginInput): Promise<AuthPayload> {
     const [user] = await db.select().from(users).where(eq(users.email, email));
 
     if (!user) {
@@ -78,19 +58,24 @@ class UserService {
       throw new Error("Invalid email or password");
     }
 
-    const refreshToken = generateRefreshToken();
-    const expiresAt = new Date(Date.now() + REFRESH_TOKEN_LIFETIME_MS);
+    const publicUser = toPublicUser(user);
+    const accessToken = createAccessToken(publicUser);
+    const refreshToken = createRefreshToken(user.id);
+    const accessTokenExpiresAt = new Date(Date.now() + ACCESS_TOKEN_LIFETIME_MS);
+    const refreshTokenExpiresAt = new Date(Date.now() + REFRESH_TOKEN_LIFETIME_MS);
 
     await db.insert(refreshTokens).values({
       token: refreshToken,
       userId: user.id,
-      expiresAt,
+      expiresAt: refreshTokenExpiresAt,
     });
 
     return {
-      user: toPublicUser(user),
+      user: publicUser,
+      accessToken,
       refreshToken,
-      refreshTokenExpiresAt: expiresAt.toISOString(),
+      accessTokenExpiresAt: accessTokenExpiresAt.toISOString(),
+      refreshTokenExpiresAt: refreshTokenExpiresAt.toISOString(),
     };
   }
 
@@ -113,32 +98,34 @@ class UserService {
     return user;
   }
 
-  public async refresh({
-    refreshToken,
-  }: {
-    refreshToken: string;
-  }): Promise<{ user: UserPublic; refreshToken: string; refreshTokenExpiresAt: string }> {
+  public async refresh({ refreshToken }: RefreshTokenInput): Promise<AuthPayload> {
+    verifyRefreshToken(refreshToken);
     const user = await this.getUserByRefreshToken(refreshToken);
 
     await db.delete(refreshTokens).where(eq(refreshTokens.token, refreshToken));
 
-    const newRefreshToken = generateRefreshToken();
-    const expiresAt = new Date(Date.now() + REFRESH_TOKEN_LIFETIME_MS);
+    const publicUser = toPublicUser(user);
+    const accessToken = createAccessToken(publicUser);
+    const newRefreshToken = createRefreshToken(user.id);
+    const accessTokenExpiresAt = new Date(Date.now() + ACCESS_TOKEN_LIFETIME_MS);
+    const refreshTokenExpiresAt = new Date(Date.now() + REFRESH_TOKEN_LIFETIME_MS);
 
     await db.insert(refreshTokens).values({
       token: newRefreshToken,
       userId: user.id,
-      expiresAt,
+      expiresAt: refreshTokenExpiresAt,
     });
 
     return {
-      user: toPublicUser(user),
+      user: publicUser,
+      accessToken,
       refreshToken: newRefreshToken,
-      refreshTokenExpiresAt: expiresAt.toISOString(),
+      accessTokenExpiresAt: accessTokenExpiresAt.toISOString(),
+      refreshTokenExpiresAt: refreshTokenExpiresAt.toISOString(),
     };
   }
 
-  public async logout({ refreshToken }: { refreshToken: string }): Promise<boolean> {
+  public async logout({ refreshToken }: RefreshTokenInput): Promise<boolean> {
     await db.delete(refreshTokens).where(eq(refreshTokens.token, refreshToken));
     return true;
   }
@@ -147,11 +134,7 @@ class UserService {
     refreshToken,
     currentPassword,
     newPassword,
-  }: {
-    refreshToken: string;
-    currentPassword: string;
-    newPassword: string;
-  }): Promise<boolean> {
+  }: ChangePasswordInput): Promise<boolean> {
     const user = await this.getUserByRefreshToken(refreshToken);
 
     const isPasswordValid = await compare(currentPassword, user.passwordHash);
@@ -174,12 +157,7 @@ class UserService {
     firstName,
     lastName,
     email,
-  }: {
-    refreshToken: string;
-    firstName?: string;
-    lastName?: string;
-    email?: string;
-  }): Promise<UserPublic> {
+  }: ChangeUserDetailsInput): Promise<UserPublic> {
     const user = await this.getUserByRefreshToken(refreshToken);
 
     if (email && email !== user.email) {
