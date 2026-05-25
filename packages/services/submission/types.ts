@@ -18,6 +18,7 @@ export type CreateSubmissionInput = {
   ipAddress: string;
   userAgent?: string;
   respondentEmail?: string;
+  formPassword?: string;
   values: Array<{
     fieldId: string;
     value: string;
@@ -26,6 +27,11 @@ export type CreateSubmissionInput = {
 
 export type DeleteSubmissionInput = {
   id: string;
+};
+
+export type GetSubmissionsByFormIdInput = {
+  formId: string;
+  userId: string;
 };
 
 export type GetSubmissionByIdInput = {

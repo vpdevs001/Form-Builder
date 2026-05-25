@@ -1,6 +1,7 @@
 import { randomBytes } from "crypto";
+import { hash } from "bcryptjs";
 import { db } from "@repo/database";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { forms, type Form } from "@repo/database/schema";
 import { toPublicForm } from "./utils";
 import type {
@@ -45,6 +46,7 @@ class FormService {
     }
 
     const shareId = generateShareId();
+    const formPassword = rest.formPassword ? await hash(rest.formPassword, 10) : null;
 
     const [created] = await db
       .insert(forms)
@@ -60,7 +62,7 @@ class FormService {
         responseLimit: rest.responseLimit,
         expiresAt: rest.expiresAt,
         isPasswordProtected: rest.isPasswordProtected ?? false,
-        formPassword: rest.formPassword,
+        formPassword,
         thankYouMessage: rest.thankYouMessage ?? "Thank you for your response!",
         theme: rest.theme ?? "Naruto",
         notifyCreator: rest.notifyCreator ?? true,
@@ -90,6 +92,14 @@ class FormService {
     return toPublicForm(form);
   }
 
+  public async getPublicForms(): Promise<FormPublic[]> {
+    const rows = await db
+      .select()
+      .from(forms)
+      .where(and(eq(forms.status, "PUBLISHED"), eq(forms.visibility, "PUBLIC")));
+    return rows.map(toPublicForm);
+  }
+
   public async getFormsByCreator({ creatorId }: GetFormsByCreatorInput): Promise<FormPublic[]> {
     const rows = await db.select().from(forms).where(eq(forms.creatorId, creatorId));
     return rows.map(toPublicForm);
@@ -107,11 +117,15 @@ class FormService {
       }
     }
 
-    const [updated] = await db
-      .update(forms)
-      .set({ ...rest, slug, updatedAt: new Date() })
-      .where(eq(forms.id, id))
-      .returning();
+    const updateValues: Partial<Form> = { ...rest, slug, updatedAt: new Date() };
+    if (rest.formPassword !== undefined) {
+      updateValues.formPassword = rest.formPassword ? await hash(rest.formPassword, 10) : null;
+    }
+    if (rest.isPasswordProtected === false && rest.formPassword === undefined) {
+      updateValues.formPassword = null;
+    }
+
+    const [updated] = await db.update(forms).set(updateValues).where(eq(forms.id, id)).returning();
 
     if (!updated) {
       throw new Error("Failed to update form");

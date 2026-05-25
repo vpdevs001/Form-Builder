@@ -55,6 +55,18 @@ export const formRouter = router({
       }
     }),
 
+  // ── GET /forms/public ─────────────────────────────────────────────────────
+  getPublic: publicProcedure
+    .meta({ openapi: { method: "GET", path: getPath("/public"), tags: TAGS } })
+    .output(formPublicSchema.array())
+    .query(async () => {
+      try {
+        return await formService.getPublicForms();
+      } catch (error) {
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: (error as Error).message });
+      }
+    }),
+
   // ── GET /forms/by-creator ─────────────────────────────────────────────────
   getByCreator: protectedProcedure
     .meta({ openapi: { method: "GET", path: getPath("/by-creator"), tags: TAGS } })

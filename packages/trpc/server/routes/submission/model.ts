@@ -30,11 +30,16 @@ export const CreateSubmissionSchema = z.object({
   ipAddress: z.string().describe("IP address of the submitter"),
   userAgent: z.string().optional().describe("User agent of the submitter"),
   respondentEmail: z.string().email().optional().describe("Email captured from form submission"),
+  formPassword: z.string().min(1).max(255).optional().describe("Password for protected forms"),
   values: z.array(SubmissionValueSchema).describe("Array of field values being submitted"),
 });
 
 export const SubmissionIdSchema = z.object({
   id: z.uuid().describe("Submission ID"),
+});
+
+export const FormIdSchema = z.object({
+  id: z.uuid().describe("Form ID"),
 });
 
 export const UserIdSchema = z.object({

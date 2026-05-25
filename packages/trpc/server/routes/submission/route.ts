@@ -1,10 +1,11 @@
 import { TRPCError } from "@trpc/server";
-import { publicProcedure, router } from "../../trpc";
+import { protectedProcedure, publicProcedure, router } from "../../trpc";
 import { submissionService } from "../../services";
 import { generatePath } from "../../utils/path-generator";
 import {
   CreateSubmissionSchema,
   DeleteSubmissionOutputSchema,
+  FormIdSchema,
   SubmissionIdSchema,
   submissionPublicSchema,
   UserIdSchema,
@@ -59,6 +60,26 @@ export const submissionRouter = router({
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
+          message: (error as Error).message,
+        });
+      }
+    }),
+
+  getByFormId: protectedProcedure
+    .meta({
+      openapi: { method: "GET", path: getPath("/by-form-id"), tags: TAGS },
+    })
+    .input(FormIdSchema)
+    .output(submissionPublicSchema.array())
+    .query(async ({ ctx, input }) => {
+      try {
+        return await submissionService.getSubmissionsByFormId({
+          formId: input.id,
+          userId: ctx.user.id,
+        });
+      } catch (error) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
           message: (error as Error).message,
         });
       }

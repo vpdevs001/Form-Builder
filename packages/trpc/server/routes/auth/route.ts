@@ -1,6 +1,6 @@
 import { z } from "../../schema";
 import { TRPCError } from "@trpc/server";
-import { publicProcedure, router } from "../../trpc";
+import { protectedProcedure, publicProcedure, router } from "../../trpc";
 import { userService } from "../../services";
 import { generatePath } from "../../utils/path-generator";
 import {
@@ -65,7 +65,7 @@ export const authRouter = router({
       }
     }),
 
-  changePassword: publicProcedure
+  changePassword: protectedProcedure
     .meta({ openapi: { method: "POST", path: getPath("/change-password"), tags: TAGS } })
     .input(changePasswordInputSchema)
     .output(z.object({ success: z.boolean() }))
@@ -77,7 +77,7 @@ export const authRouter = router({
       }
     }),
 
-  changeUserDetails: publicProcedure
+  changeUserDetails: protectedProcedure
     .meta({ openapi: { method: "POST", path: getPath("/change-user-details"), tags: TAGS } })
     .input(changeUserDetailsInputSchema)
     .output(userPublicSchema)
