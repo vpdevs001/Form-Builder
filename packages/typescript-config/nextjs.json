@@ -20,7 +20,7 @@
     "noEmit": true,
     "allowJs": true,
     "checkJs": true,
-    "moduleDetection": "force"
+    "moduleDetection": "force",
   },
   "include": ["src", "next-env.d.ts"],
   "exclude": ["node_modules"]

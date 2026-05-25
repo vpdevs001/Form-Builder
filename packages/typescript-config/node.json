@@ -5,6 +5,5 @@
   "compilerOptions": {
     "moduleResolution": "Node",
     "module": "CommonJS",
-    "ignoreDeprecations": "5.0"
   }
 }
