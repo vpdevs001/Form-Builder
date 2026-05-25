@@ -12,6 +12,7 @@ import {
   registerInputSchema,
   userPublicSchema,
 } from "./model";
+import { handleTRPCError } from "../../utils/handleError";
 
 const TAGS = ["Authentication"];
 const getPath = generatePath("/auth");
@@ -25,7 +26,7 @@ export const authRouter = router({
       try {
         return await userService.register(input);
       } catch (error) {
-        throw new TRPCError({ code: "CONFLICT", message: (error as Error).message });
+        handleTRPCError(error, "Failed to register user");
       }
     }),
 
@@ -37,7 +38,7 @@ export const authRouter = router({
       try {
         return await userService.login(input);
       } catch (error) {
-        throw new TRPCError({ code: "UNAUTHORIZED", message: (error as Error).message });
+        handleTRPCError(error, "Failed to login user");
       }
     }),
 
@@ -49,7 +50,7 @@ export const authRouter = router({
       try {
         return { success: await userService.logout(input) };
       } catch (error) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: (error as Error).message });
+        handleTRPCError(error, "Failed to logout user");
       }
     }),
 
@@ -61,7 +62,7 @@ export const authRouter = router({
       try {
         return await userService.refresh(input);
       } catch (error) {
-        throw new TRPCError({ code: "UNAUTHORIZED", message: (error as Error).message });
+        handleTRPCError(error, "Failed to refresh token");
       }
     }),
 
@@ -73,7 +74,7 @@ export const authRouter = router({
       try {
         return { success: await userService.changePassword(input) };
       } catch (error) {
-        throw new TRPCError({ code: "UNAUTHORIZED", message: (error as Error).message });
+        handleTRPCError(error, "Failed to change password");
       }
     }),
 
@@ -85,7 +86,7 @@ export const authRouter = router({
       try {
         return await userService.changeUserDetails(input);
       } catch (error) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: (error as Error).message });
+        handleTRPCError(error, "Failed to change user details");
       }
     }),
 });

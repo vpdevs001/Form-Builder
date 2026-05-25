@@ -8,6 +8,7 @@ import {
   FieldIdSchema,
   submissionValuePublicSchema,
 } from "./model";
+import { handleTRPCError } from "../../utils/handleError";
 
 const TAGS = ["Submission Values"];
 const getPath = generatePath("/submission-values");
@@ -21,7 +22,7 @@ export const submissionValueRouter = router({
       try {
         return await submissionValueService.createSubmissionValue(input);
       } catch (error) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: (error as Error).message });
+        handleTRPCError(error, "Failed to create submission value");
       }
     }),
 
@@ -33,7 +34,7 @@ export const submissionValueRouter = router({
       try {
         return await submissionValueService.getValuesBySubmissionId(input);
       } catch (error) {
-        throw new TRPCError({ code: "NOT_FOUND", message: (error as Error).message });
+        handleTRPCError(error, "Submission values not found by submission id");
       }
     }),
 
@@ -45,7 +46,7 @@ export const submissionValueRouter = router({
       try {
         return await submissionValueService.getValuesByFieldId(input);
       } catch (error) {
-        throw new TRPCError({ code: "NOT_FOUND", message: (error as Error).message });
+        handleTRPCError(error, "Submission values not found by field id");
       }
     }),
 });

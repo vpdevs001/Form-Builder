@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { protectedProcedure, router } from "../../trpc";
 import { analyticsService } from "../../services";
+import { handleTRPCError } from "../../utils/handleError";
 import { generatePath } from "../../utils/path-generator";
 import {
   AnalyticsFieldBreakdownSchema,
@@ -25,7 +26,7 @@ export const analyticsRouter = router({
       try {
         return await analyticsService.getFormSummary({ formId: input.formId, userId: ctx.user.id });
       } catch (error) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: (error as Error).message });
+        handleTRPCError(error, "Failed to get form summary");
       }
     }),
 
@@ -43,7 +44,7 @@ export const analyticsRouter = router({
           interval: input.interval,
         });
       } catch (error) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: (error as Error).message });
+        handleTRPCError(error, "Failed to get submission trend");
       }
     }),
 
@@ -59,7 +60,7 @@ export const analyticsRouter = router({
           limit: input.limit,
         });
       } catch (error) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: (error as Error).message });
+        handleTRPCError(error, "Failed to get recent submissions");
       }
     }),
 
@@ -75,7 +76,7 @@ export const analyticsRouter = router({
           fieldId: input.fieldId,
         });
       } catch (error) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: (error as Error).message });
+        handleTRPCError(error, "Failed to get field breakdown");
       }
     }),
 });

@@ -8,6 +8,7 @@ import {
   formFieldPublicSchema,
   UpdateFormFieldSchema,
 } from "./model";
+import { handleTRPCError } from "../../utils/handleError";
 import { z } from "zod";
 
 const TAGS = ["Form Fields"];
@@ -23,7 +24,7 @@ export const formFieldRouter = router({
       try {
         return await formFieldService.createField(input);
       } catch (error) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: (error as Error).message });
+        handleTRPCError(error, "Failed to create form field");
       }
     }),
 
@@ -36,7 +37,7 @@ export const formFieldRouter = router({
       try {
         return await formFieldService.updateField(input);
       } catch (error) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: (error as Error).message });
+        handleTRPCError(error, "Failed to update form field");
       }
     }),
 
@@ -49,7 +50,7 @@ export const formFieldRouter = router({
       try {
         return { success: await formFieldService.deleteField(input) };
       } catch (error) {
-        throw new TRPCError({ code: "NOT_FOUND", message: (error as Error).message });
+        handleTRPCError(error, "Form field not found");
       }
     }),
 });

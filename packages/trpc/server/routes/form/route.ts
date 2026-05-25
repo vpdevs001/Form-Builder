@@ -12,6 +12,7 @@ import {
   FormShareIdSchema,
   UpdateFormSchema,
 } from "./model";
+import { handleTRPCError } from "../../utils/handleError";
 const TAGS = ["Forms"];
 const getPath = generatePath("/forms");
 
@@ -25,7 +26,7 @@ export const formRouter = router({
       try {
         return await formService.createForm(input);
       } catch (error) {
-        throw new TRPCError({ code: "CONFLICT", message: (error as Error).message });
+        handleTRPCError(error, "Failed to create form");
       }
     }),
 
@@ -38,7 +39,7 @@ export const formRouter = router({
       try {
         return await formService.getFormById(input);
       } catch (error) {
-        throw new TRPCError({ code: "NOT_FOUND", message: (error as Error).message });
+        handleTRPCError(error, "Form not found by id");
       }
     }),
 
@@ -51,7 +52,7 @@ export const formRouter = router({
       try {
         return await formService.getFormByShareId(input);
       } catch (error) {
-        throw new TRPCError({ code: "NOT_FOUND", message: (error as Error).message });
+        handleTRPCError(error, "Form not found by share id");
       }
     }),
 
@@ -63,7 +64,7 @@ export const formRouter = router({
       try {
         return await formService.getPublicForms();
       } catch (error) {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: (error as Error).message });
+        handleTRPCError(error, "Failed to get public forms");
       }
     }),
 
@@ -76,7 +77,7 @@ export const formRouter = router({
       try {
         return await formService.getFormsByCreator(input);
       } catch (error) {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: (error as Error).message });
+        handleTRPCError(error, "Failed to get forms by creator");
       }
     }),
 
@@ -89,7 +90,7 @@ export const formRouter = router({
       try {
         return await formService.updateForm(input);
       } catch (error) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: (error as Error).message });
+        handleTRPCError(error, "Failed to update form");
       }
     }),
 
@@ -102,7 +103,7 @@ export const formRouter = router({
       try {
         return await formService.updateFormSettings(input);
       } catch (error) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: (error as Error).message });
+        handleTRPCError(error, "Failed to update form settings");
       }
     }),
 
@@ -115,7 +116,7 @@ export const formRouter = router({
       try {
         return await formService.publishForm(input);
       } catch (error) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: (error as Error).message });
+        handleTRPCError(error, "Failed to publish form");
       }
     }),
 
@@ -128,7 +129,7 @@ export const formRouter = router({
       try {
         return await formService.archiveForm(input);
       } catch (error) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: (error as Error).message });
+        handleTRPCError(error, "Failed to archive form");
       }
     }),
 
@@ -141,7 +142,7 @@ export const formRouter = router({
       try {
         return { success: await formService.deleteForm(input) };
       } catch (error) {
-        throw new TRPCError({ code: "NOT_FOUND", message: (error as Error).message });
+        handleTRPCError(error, "Failed to delete form");
       }
     }),
 });

@@ -1,7 +1,11 @@
 import * as trpcExpress from "@trpc/server/adapters/express";
 import { verifyAccessToken } from "@repo/services/auth";
+import { logger } from "../../logger";
 
-export async function createContext({ req, res }: trpcExpress.CreateExpressContextOptions): Promise<{
+export async function createContext({
+  req,
+  res,
+}: trpcExpress.CreateExpressContextOptions): Promise<{
   req: any;
   res: any;
   user: {
@@ -27,7 +31,10 @@ export async function createContext({ req, res }: trpcExpress.CreateExpressConte
           lastName: decoded.lastName,
         };
       } catch (error) {
-        throw new Error("Invalid or expired token");
+        logger.warn("Invalid or expired token", {
+          error: error instanceof Error ? { message: error.message } : String(error),
+        });
+        user = null;
       }
     }
   }

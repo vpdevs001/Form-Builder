@@ -10,6 +10,7 @@ import {
   submissionPublicSchema,
   UserIdSchema,
 } from "./model";
+import { handleTRPCError } from "../../utils/handleError";
 
 const TAGS = ["Submissions"];
 const getPath = generatePath("/submissions");
@@ -24,10 +25,7 @@ export const submissionRouter = router({
       try {
         return await submissionService.createSubmission(input);
       } catch (error) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: (error as Error).message,
-        });
+        handleTRPCError(error, "Failed to create submission");
       }
     }),
 
@@ -40,10 +38,7 @@ export const submissionRouter = router({
       try {
         return await submissionService.getSubmissionById(input);
       } catch (error) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: (error as Error).message,
-        });
+        handleTRPCError(error, "Failed to get submission by id");
       }
     }),
 
@@ -58,10 +53,7 @@ export const submissionRouter = router({
       try {
         return await submissionService.getSubmissionsByUser(input);
       } catch (error) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: (error as Error).message,
-        });
+        handleTRPCError(error, "Failed to get submissions by user");
       }
     }),
 
@@ -78,10 +70,7 @@ export const submissionRouter = router({
           userId: ctx.user.id,
         });
       } catch (error) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: (error as Error).message,
-        });
+        handleTRPCError(error, "Unauthorized to get submissions by form id");
       }
     }),
 
@@ -94,10 +83,7 @@ export const submissionRouter = router({
       try {
         return await submissionService.deleteSubmission(input);
       } catch (error) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: (error as Error).message,
-        });
+        handleTRPCError(error, "Failed to delete submission");
       }
     }),
 });
