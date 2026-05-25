@@ -6,6 +6,7 @@ import { formRouter } from "./routes/form/route";
 import { formFieldRouter } from "./routes/form-field/route";
 import { submissionRouter } from "./routes/submission/route";
 import { submissionValueRouter } from "./routes/submission-value/route";
+import { analyticsRouter } from "./routes/analytics/route";
 
 export const serverRouter = router({
   health: healthRouter,
@@ -14,6 +15,7 @@ export const serverRouter = router({
   formField: formFieldRouter,
   submission: submissionRouter,
   submissionValue: submissionValueRouter,
+  analytics: analyticsRouter,
 });
 
 export { createContext } from "./context";
