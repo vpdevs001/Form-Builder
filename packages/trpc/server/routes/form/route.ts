@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { publicProcedure, router } from "../../trpc";
+import { publicProcedure, protectedProcedure, router } from "../../trpc";
 import { formService } from "../../services";
 import { generatePath } from "../../utils/path-generator";
 import {
@@ -17,7 +17,7 @@ const getPath = generatePath("/forms");
 
 export const formRouter = router({
   // ── POST /forms/create ────────────────────────────────────────────────────
-  create: publicProcedure
+  create: protectedProcedure
     .meta({ openapi: { method: "POST", path: getPath("/create"), tags: TAGS } })
     .input(CreateFormSchema)
     .output(formPublicSchema)
@@ -56,7 +56,7 @@ export const formRouter = router({
     }),
 
   // ── GET /forms/by-creator ─────────────────────────────────────────────────
-  getByCreator: publicProcedure
+  getByCreator: protectedProcedure
     .meta({ openapi: { method: "GET", path: getPath("/by-creator"), tags: TAGS } })
     .input(FormCreatorIdSchema)
     .output(formPublicSchema.array())
@@ -69,7 +69,7 @@ export const formRouter = router({
     }),
 
   // ── PATCH /forms/update ───────────────────────────────────────────────────
-  update: publicProcedure
+  update: protectedProcedure
     .meta({ openapi: { method: "PATCH", path: getPath("/update"), tags: TAGS } })
     .input(UpdateFormSchema)
     .output(formPublicSchema)
@@ -82,7 +82,7 @@ export const formRouter = router({
     }),
 
   // ── PATCH /forms/settings ─────────────────────────────────────────────────
-  updateSettings: publicProcedure
+  updateSettings: protectedProcedure
     .meta({ openapi: { method: "PATCH", path: getPath("/settings"), tags: TAGS } })
     .input(FormSettingsWithIdSchema)
     .output(formPublicSchema)
@@ -95,7 +95,7 @@ export const formRouter = router({
     }),
 
   // ── POST /forms/publish ───────────────────────────────────────────────────
-  publish: publicProcedure
+  publish: protectedProcedure
     .meta({ openapi: { method: "POST", path: getPath("/publish"), tags: TAGS } })
     .input(FormIdSchema)
     .output(formPublicSchema)
@@ -108,7 +108,7 @@ export const formRouter = router({
     }),
 
   // ── POST /forms/archive ───────────────────────────────────────────────────
-  archive: publicProcedure
+  archive: protectedProcedure
     .meta({ openapi: { method: "POST", path: getPath("/archive"), tags: TAGS } })
     .input(FormIdSchema)
     .output(formPublicSchema)
@@ -121,7 +121,7 @@ export const formRouter = router({
     }),
 
   // ── DELETE /forms/delete ──────────────────────────────────────────────────
-  delete: publicProcedure
+  delete: protectedProcedure
     .meta({ openapi: { method: "DELETE", path: getPath("/delete"), tags: TAGS } })
     .input(FormIdSchema)
     .output(DeleteFormOutputSchema)

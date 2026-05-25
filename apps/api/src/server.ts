@@ -1,6 +1,7 @@
 import express from "express";
 import { logger } from "@repo/logger";
 import cors from "cors";
+import rateLimit from "express-rate-limit";
 
 import * as trpcExpress from "@trpc/server/adapters/express";
 import { generateOpenApiDocument, createOpenApiExpressMiddleware } from "trpc-to-openapi";
@@ -11,6 +12,19 @@ import { serverRouter, createContext } from "@repo/trpc/server";
 import { env } from "./env";
 
 export const app = express();
+
+const submissionLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  limit: 10, // Limit each IP to 10 submissions per 15 minutes
+  standardHeaders: "draft-7",
+  legacyHeaders: false,
+  message: { message: "Too many submissions from this IP, please try again after 15 minutes" },
+});
+
+// Apply rate limiter to submission routes
+app.use("/api/submissions/create", submissionLimiter);
+app.use("/trpc/submission.create", submissionLimiter);
+
 const openApiDocument = generateOpenApiDocument(serverRouter, {
   title: "Streamyst OpenAPI",
   version: "1.0.0",

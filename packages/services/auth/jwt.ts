@@ -28,3 +28,7 @@ export function createRefreshToken(userId: string): string {
 export function verifyRefreshToken(token: string): JwtPayload & { sub: string } {
   return verify(token, env.JWT_REFRESH_SECRET) as JwtPayload & { sub: string };
 }
+
+export function verifyAccessToken(token: string): JwtPayload & { sub: string, email: string, role: string, firstName: string, lastName: string } {
+  return verify(token, env.JWT_ACCESS_SECRET) as JwtPayload & { sub: string, email: string, role: string, firstName: string, lastName: string };
+}

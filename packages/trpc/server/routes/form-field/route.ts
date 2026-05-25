@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { publicProcedure, router } from "../../trpc";
+import { protectedProcedure, router } from "../../trpc";
 import { formFieldService } from "../../services";
 import { generatePath } from "../../utils/path-generator";
 import {
@@ -15,7 +15,7 @@ const getPath = generatePath("/form-fields");
 
 export const formFieldRouter = router({
   // ── POST /form-fields/create ──────────────────────────────────────────────
-  create: publicProcedure
+  create: protectedProcedure
     .meta({ openapi: { method: "POST", path: getPath("/create"), tags: TAGS } })
     .input(CreateFormFieldSchema)
     .output(formFieldPublicSchema)
@@ -28,7 +28,7 @@ export const formFieldRouter = router({
     }),
 
   // ── PATCH /form-fields/update ──────────────────────────────────────────────
-  update: publicProcedure
+  update: protectedProcedure
     .meta({ openapi: { method: "PATCH", path: getPath("/update"), tags: TAGS } })
     .input(UpdateFormFieldSchema)
     .output(formFieldPublicSchema)
@@ -41,7 +41,7 @@ export const formFieldRouter = router({
     }),
 
   // ── DELETE /form-fields/delete ─────────────────────────────────────────────
-  delete: publicProcedure
+  delete: protectedProcedure
     .meta({ openapi: { method: "DELETE", path: getPath("/delete"), tags: TAGS } })
     .input(DeleteFormFieldSchema)
     .output(z.object({ success: z.boolean() }))

@@ -1,6 +1,6 @@
 import { db } from "@repo/database";
 import { eq, and } from "drizzle-orm";
-import { submissions, submissionValues, type Submission } from "@repo/database/schema";
+import { submissions, submissionValues, forms, type Submission } from "@repo/database/schema";
 import { toPublicSubmission } from "./utils";
 import type {
   CreateSubmissionInput,
@@ -27,6 +27,15 @@ class SubmissionService {
 
   public async createSubmission(input: CreateSubmissionInput): Promise<SubmissionPublic> {
     const { formId, values, submittedBy, ipAddress, userAgent, respondentEmail } = input;
+
+    // Check form visibility
+    const [form] = await db.select().from(forms).where(eq(forms.id, formId));
+    if (!form) {
+      throw new Error("Form not found");
+    }
+    if (form.visibility === "PRIVATE" || form.status !== "PUBLISHED") {
+      throw new Error("This form is not currently accepting submissions");
+    }
 
     // Insert submission
     const [created] = await db

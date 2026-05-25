@@ -189,3 +189,4 @@ class UserService {
 }
 
 export default UserService;
+export { verifyAccessToken } from "./jwt";
