@@ -1,7 +1,8 @@
 import { compare } from "bcryptjs";
 import { db } from "@repo/database";
 import { eq } from "drizzle-orm";
-import { submissions, submissionValues, forms, type Submission } from "@repo/database/schema";
+import { submissions, submissionValues, forms, users, type Submission } from "@repo/database/schema";
+import { sendEmail } from "../mailer";
 import { toPublicSubmission } from "./utils";
 import type {
   CreateSubmissionInput,
@@ -88,6 +89,50 @@ class SubmissionService {
           value: v.value,
         })),
       );
+    }
+
+    const [creator] = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, form.creatorId));
+
+    const emailTasks: Promise<void>[] = [];
+
+    if (form.notifyCreator && creator?.email) {
+      emailTasks.push(
+        sendEmail({
+          to: creator.email,
+          subject: `New response for your form \"${form.title}\"`,
+          text: `Your form "${form.title}" just received a new response.
+
+Respondent email: ${respondentEmail ?? "Not provided"}
+
+You can view submissions in your dashboard.`,
+        }),
+      );
+    }
+
+    if (form.notifyRespondent && respondentEmail) {
+      emailTasks.push(
+        sendEmail({
+          to: respondentEmail,
+          subject: `Thanks for submitting \"${form.title}\"`,
+          text: `Thank you for submitting your response to "${form.title}".
+
+${form.thankYouMessage}
+
+If you need help, contact the form creator at ${creator?.email ?? "their email"}.`,
+        }),
+      );
+    }
+
+    if (emailTasks.length > 0) {
+      const results = await Promise.allSettled(emailTasks);
+      results.forEach((result) => {
+        if (result.status === "rejected") {
+          console.error("Failed to send notification email", result.reason);
+        }
+      });
     }
 
     return toPublicSubmission(created);
