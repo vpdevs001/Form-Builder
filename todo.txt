@@ -1,0 +1,17 @@
+TODO LIST for Backend Requirements (based on HACKATHON_BRIEF.md):
+
+[ ] 1. Authentication & Protected Procedures
+    - Implement `protectedProcedure` in tRPC context.
+    - Ensure only authenticated creators can create/edit/delete/publish forms.
+
+[ ] 2. Visibility Modes Logic
+    - Ensure form submission is blocked if form visibility is PRIVATE/UNPUBLISHED.
+
+[ ] 3. Rate Limiting
+    - Implement rate limiting on the public submission API.
+
+[ ] 4. Email Notifications
+    - Send email to creator and respondent upon successful form submission.
+
+[ ] 5. Analytics Queries
+    - Add tRPC queries for response analytics (e.g., aggregate data for dashboards).

@@ -5,6 +5,7 @@ import { authRouter } from "./routes/auth/route";
 import { formRouter } from "./routes/form/route";
 import { formFieldRouter } from "./routes/form-field/route";
 import { submissionRouter } from "./routes/submission/route";
+import { submissionValueRouter } from "./routes/submission-value/route";
 
 export const serverRouter = router({
   health: healthRouter,
@@ -12,6 +13,7 @@ export const serverRouter = router({
   form: formRouter,
   formField: formFieldRouter,
   submission: submissionRouter,
+  submissionValue: submissionValueRouter,
 });
 
 export { createContext } from "./context";
