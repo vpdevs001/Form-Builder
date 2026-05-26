@@ -9,6 +9,7 @@ import { generateOpenApiDocument, createOpenApiExpressMiddleware } from "trpc-to
 import { apiReference } from "@scalar/express-api-reference";
 
 import { serverRouter, createContext } from "@repo/trpc/server";
+import { errorHandler, notFoundHandler } from "./middleware/errorHandler";
 
 import { env } from "./env";
 
@@ -77,5 +78,11 @@ app.use(
     createContext,
   }),
 );
+
+// 404 handler - must be before error handler
+app.use(notFoundHandler);
+
+// Global error handler - must be last
+app.use(errorHandler);
 
 export default app;

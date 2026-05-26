@@ -1,4 +1,3 @@
-import { TRPCError } from "@trpc/server";
 import { protectedProcedure, router } from "../../trpc";
 import { formFieldService } from "../../services";
 import { generatePath } from "../../utils/path-generator";

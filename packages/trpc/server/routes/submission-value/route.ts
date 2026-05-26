@@ -1,4 +1,3 @@
-import { TRPCError } from "@trpc/server";
 import { publicProcedure, router } from "../../trpc";
 import { submissionValueService } from "../../services";
 import { generatePath } from "../../utils/path-generator";

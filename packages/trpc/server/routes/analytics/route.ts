@@ -1,4 +1,3 @@
-import { TRPCError } from "@trpc/server";
 import { protectedProcedure, router } from "../../trpc";
 import { analyticsService } from "../../services";
 import { handleTRPCError } from "../../utils/handleError";
