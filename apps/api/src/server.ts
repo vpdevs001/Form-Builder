@@ -38,7 +38,8 @@ const openApiDocument = generateOpenApiDocument(serverRouter, {
 if (env.NODE_ENV !== "prod") {
   app.use(
     cors({
-      origin: "*",
+      origin: ["http://localhost:3000", "http://127.0.0.1:3000"],
+      credentials: true,
     }),
   );
 }

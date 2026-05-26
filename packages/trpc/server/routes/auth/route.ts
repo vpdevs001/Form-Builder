@@ -3,6 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { protectedProcedure, publicProcedure, router } from "../../trpc";
 import { userService } from "../../services";
 import { generatePath } from "../../utils/path-generator";
+import { parseCookies } from "../../context";
 import {
   authPayloadSchema,
   changePasswordInputSchema,
@@ -34,9 +35,27 @@ export const authRouter = router({
     .meta({ openapi: { method: "POST", path: getPath("/login"), tags: TAGS } })
     .input(loginInputSchema)
     .output(authPayloadSchema)
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       try {
-        return await userService.login(input);
+        const payload = await userService.login(input);
+
+        // Set secure HTTP-Only cookies
+        ctx.res.cookie("accessToken", payload.accessToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax",
+          path: "/",
+          expires: new Date(payload.accessTokenExpiresAt),
+        });
+        ctx.res.cookie("refreshToken", payload.refreshToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax",
+          path: "/",
+          expires: new Date(payload.refreshTokenExpiresAt),
+        });
+
+        return payload;
       } catch (error) {
         handleTRPCError(error, "Failed to login user");
       }
@@ -44,11 +63,25 @@ export const authRouter = router({
 
   logout: publicProcedure
     .meta({ openapi: { method: "POST", path: getPath("/logout"), tags: TAGS } })
-    .input(refreshTokenInputSchema)
+    .input(refreshTokenInputSchema.partial())
     .output(z.object({ success: z.boolean() }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       try {
-        return { success: await userService.logout(input) };
+        let token = input?.refreshToken;
+        if (!token && ctx.req?.headers?.cookie) {
+          const cookies = parseCookies(ctx.req.headers.cookie);
+          token = cookies["refreshToken"];
+        }
+        if (!token) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Refresh token is required" });
+        }
+        const success = await userService.logout({ refreshToken: token });
+
+        // Clear cookies
+        ctx.res.clearCookie("accessToken", { path: "/" });
+        ctx.res.clearCookie("refreshToken", { path: "/" });
+
+        return { success };
       } catch (error) {
         handleTRPCError(error, "Failed to logout user");
       }
@@ -56,13 +89,51 @@ export const authRouter = router({
 
   refresh: publicProcedure
     .meta({ openapi: { method: "POST", path: getPath("/refresh"), tags: TAGS } })
-    .input(refreshTokenInputSchema)
+    .input(refreshTokenInputSchema.partial())
     .output(authPayloadSchema)
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       try {
-        return await userService.refresh(input);
+        let token = input?.refreshToken;
+        if (!token && ctx.req?.headers?.cookie) {
+          const cookies = parseCookies(ctx.req.headers.cookie);
+          token = cookies["refreshToken"];
+        }
+        if (!token) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Refresh token is required" });
+        }
+        const payload = await userService.refresh({ refreshToken: token });
+
+        // Set cookies
+        ctx.res.cookie("accessToken", payload.accessToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax",
+          path: "/",
+          expires: new Date(payload.accessTokenExpiresAt),
+        });
+        ctx.res.cookie("refreshToken", payload.refreshToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax",
+          path: "/",
+          expires: new Date(payload.refreshTokenExpiresAt),
+        });
+
+        return payload;
       } catch (error) {
         handleTRPCError(error, "Failed to refresh token");
+      }
+    }),
+
+  me: publicProcedure
+    .meta({ openapi: { method: "GET", path: getPath("/me"), tags: TAGS } })
+    .output(userPublicSchema.nullable())
+    .query(async ({ ctx }) => {
+      if (!ctx.user) return null;
+      try {
+        return await userService.getUserById(ctx.user.id);
+      } catch (error) {
+        return null;
       }
     }),
 

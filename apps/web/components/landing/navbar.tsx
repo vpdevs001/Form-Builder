@@ -2,13 +2,15 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X, ArrowRight, Sparkles } from "lucide-react";
+import { Menu, X, ArrowRight, Sparkles, LogOut, LayoutDashboard } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from "~/components/ui/sheet";
 import { NAV_LINKS } from "~/lib/constants";
+import { useAuth } from "~/providers/auth-provider";
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const { isAuthenticated, logout } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -67,30 +69,60 @@ export function Navbar() {
 
         {/* Desktop Actions */}
         <div className="hidden md:flex items-center gap-4">
-          <Link href="/login">
-            <Button variant="ghost" className="text-foreground/80 hover:text-primary hover:bg-primary/10 transition-colors text-sm font-semibold">
-              Login
-            </Button>
-          </Link>
-          <Link href="/signup">
-            <Button className="bg-primary hover:bg-primary/95 text-white font-bold px-5 shadow-[0_0_15px_rgba(255,107,0,0.3)] hover:shadow-[0_0_20px_rgba(255,107,0,0.5)] transition-all group duration-300 text-sm">
-              Get Started
-              <ArrowRight className="w-4 h-4 ml-1.5 group-hover:translate-x-1 transition-transform" />
-            </Button>
-          </Link>
+          {isAuthenticated ? (
+            <>
+              <Link href="/dashboard">
+                <Button variant="ghost" className="text-foreground/80 hover:text-primary hover:bg-primary/10 transition-colors text-sm font-semibold gap-1.5 cursor-pointer">
+                  <LayoutDashboard className="w-4 h-4" />
+                  Dashboard
+                </Button>
+              </Link>
+              <Button
+                onClick={logout}
+                variant="outline"
+                className="border-foreground/10 hover:border-secondary/50 text-foreground/80 hover:text-secondary hover:bg-secondary/5 transition-colors text-sm font-semibold gap-1.5 cursor-pointer"
+              >
+                <LogOut className="w-4 h-4" />
+                Logout
+              </Button>
+            </>
+          ) : (
+            <>
+              <Link href="/login">
+                <Button variant="ghost" className="text-foreground/80 hover:text-primary hover:bg-primary/10 transition-colors text-sm font-semibold cursor-pointer">
+                  Login
+                </Button>
+              </Link>
+              <Link href="/signup">
+                <Button className="bg-primary hover:bg-primary/95 text-white font-bold px-5 shadow-[0_0_15px_rgba(255,107,0,0.3)] hover:shadow-[0_0_20px_rgba(255,107,0,0.5)] transition-all group duration-300 text-sm cursor-pointer">
+                  Get Started
+                  <ArrowRight className="w-4 h-4 ml-1.5 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Mobile Navigation Trigger */}
         <div className="md:hidden flex items-center gap-3">
-          <Link href="/login">
-            <Button variant="ghost" className="text-foreground/80 hover:text-primary px-3 text-xs">
-              Login
-            </Button>
-          </Link>
+          {isAuthenticated ? (
+            <Link href="/dashboard">
+              <Button variant="ghost" className="text-foreground/80 hover:text-primary px-3 text-xs gap-1 cursor-pointer">
+                <LayoutDashboard className="w-3.5 h-3.5" />
+                Dashboard
+              </Button>
+            </Link>
+          ) : (
+            <Link href="/login">
+              <Button variant="ghost" className="text-foreground/80 hover:text-primary px-3 text-xs cursor-pointer">
+                Login
+              </Button>
+            </Link>
+          )}
           
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-foreground hover:bg-primary/10 hover:text-primary">
+              <Button variant="ghost" size="icon" className="text-foreground hover:bg-primary/10 hover:text-primary cursor-pointer">
                 <Menu className="w-6 h-6" />
               </Button>
             </SheetTrigger>
@@ -124,21 +156,42 @@ export function Navbar() {
 
               {/* Mobile Actions */}
               <div className="flex flex-col gap-4">
-                <SheetClose asChild>
-                  <Link href="/login" className="w-full">
-                    <Button variant="outline" className="w-full text-foreground/80 border-primary/20 hover:bg-primary/10 hover:text-primary font-semibold">
-                      Login
-                    </Button>
-                  </Link>
-                </SheetClose>
-                <SheetClose asChild>
-                  <Link href="/signup" className="w-full">
-                    <Button className="w-full bg-primary hover:bg-primary/95 text-white font-bold shadow-[0_0_15px_rgba(255,107,0,0.3)]">
-                      Get Started
-                      <ArrowRight className="w-4 h-4 ml-1.5" />
-                    </Button>
-                  </Link>
-                </SheetClose>
+                {isAuthenticated ? (
+                  <>
+                    <SheetClose asChild>
+                      <Link href="/dashboard" className="w-full">
+                        <Button className="w-full bg-primary hover:bg-primary/95 text-white font-bold gap-1.5 cursor-pointer">
+                          <LayoutDashboard className="w-4 h-4" />
+                          Go to Dashboard
+                        </Button>
+                      </Link>
+                    </SheetClose>
+                    <SheetClose asChild>
+                      <Button onClick={logout} variant="outline" className="w-full text-foreground/80 border-primary/20 hover:bg-secondary/10 hover:text-secondary hover:border-secondary/40 font-semibold gap-1.5 cursor-pointer">
+                        <LogOut className="w-4 h-4" />
+                        Logout
+                      </Button>
+                    </SheetClose>
+                  </>
+                ) : (
+                  <>
+                    <SheetClose asChild>
+                      <Link href="/login" className="w-full">
+                        <Button variant="outline" className="w-full text-foreground/80 border-primary/20 hover:bg-primary/10 hover:text-primary font-semibold cursor-pointer">
+                          Login
+                        </Button>
+                      </Link>
+                    </SheetClose>
+                    <SheetClose asChild>
+                      <Link href="/signup" className="w-full">
+                        <Button className="w-full bg-primary hover:bg-primary/95 text-white font-bold shadow-[0_0_15px_rgba(255,107,0,0.3)] cursor-pointer">
+                          Get Started
+                          <ArrowRight className="w-4 h-4 ml-1.5" />
+                        </Button>
+                      </Link>
+                    </SheetClose>
+                  </>
+                )}
               </div>
             </SheetContent>
           </Sheet>

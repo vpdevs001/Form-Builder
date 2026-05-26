@@ -186,6 +186,14 @@ class UserService {
 
     return toPublicUser(updatedUser);
   }
+
+  public async getUserById(id: string): Promise<UserPublic> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    if (!user) {
+      throw new Error("User not found");
+    }
+    return toPublicUser(user);
+  }
 }
 
 export default UserService;
