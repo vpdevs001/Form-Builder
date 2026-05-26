@@ -1,6 +1,7 @@
 import express from "express";
 import { logger } from "@repo/logger";
 import cors from "cors";
+import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 
 import * as trpcExpress from "@trpc/server/adapters/express";
@@ -12,6 +13,9 @@ import { serverRouter, createContext } from "@repo/trpc/server";
 import { env } from "./env";
 
 export const app = express();
+
+// Security headers
+app.use(helmet());
 
 const submissionLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
