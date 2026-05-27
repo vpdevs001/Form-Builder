@@ -2,12 +2,16 @@
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { GripVertical, Loader2, Plus, Trash2 } from "lucide-react";
+import { toast } from "sonner";
+import { FormWorkspaceNav } from "~/components/forms/form-workspace-nav";
+import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
+import { Textarea } from "~/components/ui/textarea";
 import { useAuth } from "~/providers/auth-provider";
 import { api } from "~/trpc/server";
-import { toast } from "sonner";
 
 type FieldType =
   | "SHORT_TEXT"
@@ -15,7 +19,24 @@ type FieldType =
   | "EMAIL"
   | "NUMBER"
   | "SINGLE_SELECT"
-  | "MULTI_SELECT";
+  | "MULTI_SELECT"
+  | "CHECKBOX"
+  | "DROPDOWN"
+  | "RATING"
+  | "DATE";
+
+const FIELD_TYPE_LABELS: Record<FieldType, string> = {
+  SHORT_TEXT: "Short text",
+  LONG_TEXT: "Long text",
+  EMAIL: "Email",
+  NUMBER: "Number",
+  SINGLE_SELECT: "Single select",
+  MULTI_SELECT: "Multi select",
+  CHECKBOX: "Checkbox",
+  DROPDOWN: "Dropdown",
+  RATING: "Rating",
+  DATE: "Date",
+};
 
 export default function FormBuilderPage() {
   const router = useRouter();
@@ -26,10 +47,13 @@ export default function FormBuilderPage() {
   const [form, setForm] = useState<Awaited<ReturnType<typeof api.form.getById.query>> | null>(null);
   const [fields, setFields] = useState<Awaited<ReturnType<typeof api.formField.getByFormId.query>>>([]);
   const [label, setLabel] = useState("");
+  const [placeholder, setPlaceholder] = useState("");
+  const [helpText, setHelpText] = useState("");
   const [fieldType, setFieldType] = useState<FieldType>("SHORT_TEXT");
   const [required, setRequired] = useState(false);
   const [options, setOptions] = useState("");
   const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const loadData = async () => {
     try {
@@ -37,6 +61,11 @@ export default function FormBuilderPage() {
         api.form.getById.query({ id: formId }),
         api.formField.getByFormId.query({ formId }),
       ]);
+      if (user && formData.creatorId !== user.id) {
+        toast.error("You do not have access to this form.");
+        router.push("/dashboard");
+        return;
+      }
       setForm(formData);
       setFields(fieldData.sort((a, b) => a.fieldOrder - b.fieldOrder));
     } catch (error: any) {
@@ -56,7 +85,8 @@ export default function FormBuilderPage() {
   }, [loading, isAuthenticated, user, formId, router]);
 
   const canHaveOptions = useMemo(
-    () => fieldType === "SINGLE_SELECT" || fieldType === "MULTI_SELECT",
+    () =>
+      ["SINGLE_SELECT", "MULTI_SELECT", "CHECKBOX", "DROPDOWN"].includes(fieldType),
     [fieldType],
   );
 
@@ -77,9 +107,17 @@ export default function FormBuilderPage() {
             }))
         : undefined;
 
+      if (canHaveOptions && (!optionList || optionList.length === 0)) {
+        toast.error("Add at least one option for this field type.");
+        setSaving(false);
+        return;
+      }
+
       await api.formField.create.mutate({
         formId: form.id,
         label,
+        placeholder: placeholder || undefined,
+        helpText: helpText || undefined,
         fieldType,
         isRequired: required,
         fieldOrder: fields.length,
@@ -87,6 +125,8 @@ export default function FormBuilderPage() {
       });
 
       setLabel("");
+      setPlaceholder("");
+      setHelpText("");
       setRequired(false);
       setOptions("");
       toast.success("Question added");
@@ -98,9 +138,26 @@ export default function FormBuilderPage() {
     }
   };
 
+  const handleDeleteField = async (fieldId: string) => {
+    setDeletingId(fieldId);
+    try {
+      await api.formField.delete.mutate({ id: fieldId });
+      toast.success("Question removed");
+      await loadData();
+    } catch (error: any) {
+      toast.error(error.message || "Failed to delete question");
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   const setStatus = async (next: "PUBLISHED" | "ARCHIVED") => {
     try {
       if (next === "PUBLISHED") {
+        if (fields.length === 0) {
+          toast.error("Add at least one question before publishing.");
+          return;
+        }
         await api.form.publish.mutate({ id: formId });
       } else {
         await api.form.archive.mutate({ id: formId });
@@ -113,109 +170,176 @@ export default function FormBuilderPage() {
   };
 
   if (loading || !isAuthenticated) {
-    return <div className="min-h-screen bg-[#060913]" />;
+    return (
+      <div className="min-h-screen bg-[#060913] flex items-center justify-center">
+        <Loader2 className="w-10 h-10 text-primary animate-spin" />
+      </div>
+    );
   }
 
   return (
     <div className="min-h-screen bg-[#060913] text-foreground py-12 px-4">
-      <div className="max-w-4xl mx-auto space-y-6">
-        <div className="bg-card/30 border border-primary/10 rounded-xl p-6">
-          <h1 className="text-2xl font-bold">{form?.title || "Form builder"}</h1>
-          <p className="text-sm text-foreground/60 mt-2">
-            Share link:{" "}
-            <button
-              type="button"
-              onClick={() => router.push(`/forms/${form?.shareId}`)}
-              className="text-primary underline cursor-pointer"
-            >
-              /forms/{form?.shareId}
-            </button>
-          </p>
-          <div className="mt-4 flex gap-2">
+      <div className="max-w-5xl mx-auto space-y-6">
+        <div className="bg-card/30 border border-primary/10 rounded-2xl p-6">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div>
+              <p className="text-xs uppercase tracking-wider text-primary font-bold">Question builder</p>
+              <h1 className="text-2xl font-bold mt-1">{form?.title || "Form builder"}</h1>
+              <p className="text-sm text-foreground/60 mt-1">
+                Theme: {form?.theme} • {fields.length} question{fields.length === 1 ? "" : "s"}
+              </p>
+            </div>
+            <FormWorkspaceNav formId={formId} />
+          </div>
+          <div className="mt-4 flex flex-wrap gap-2">
             <Button onClick={() => setStatus("PUBLISHED")} className="bg-primary">
               Publish
             </Button>
             <Button variant="outline" onClick={() => setStatus("ARCHIVED")}>
               Archive
             </Button>
-            <Button variant="outline" onClick={() => router.push("/dashboard")}>
-              Back to dashboard
+            <Button variant="outline" onClick={() => router.push(`/forms/${form?.shareId}`)}>
+              Preview
             </Button>
           </div>
         </div>
 
-        <form
-          onSubmit={handleAddField}
-          className="bg-card/30 border border-primary/10 rounded-xl p-6 space-y-4"
-        >
-          <h2 className="text-lg font-semibold">Add a question</h2>
-          <div className="space-y-2">
-            <Label htmlFor="label">Question label</Label>
-            <Input
-              id="label"
-              value={label}
-              onChange={(event) => setLabel(event.target.value)}
-              required
-              placeholder="What did you enjoy most?"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="fieldType">Field type</Label>
-            <select
-              id="fieldType"
-              value={fieldType}
-              onChange={(event) => setFieldType(event.target.value as FieldType)}
-              className="w-full rounded-md border border-primary/20 bg-[#060913] px-3 py-2 text-sm"
-            >
-              <option value="SHORT_TEXT">Short text</option>
-              <option value="LONG_TEXT">Long text</option>
-              <option value="EMAIL">Email</option>
-              <option value="NUMBER">Number</option>
-              <option value="SINGLE_SELECT">Single select</option>
-              <option value="MULTI_SELECT">Multi select</option>
-            </select>
-          </div>
-          {canHaveOptions ? (
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          <form
+            onSubmit={handleAddField}
+            className="lg:col-span-2 bg-card/30 border border-primary/10 rounded-2xl p-6 space-y-4 h-fit"
+          >
+            <div className="flex items-center gap-2">
+              <Plus className="w-4 h-4 text-primary" />
+              <h2 className="text-lg font-semibold">Add question</h2>
+            </div>
+
             <div className="space-y-2">
-              <Label htmlFor="options">Options (comma separated)</Label>
+              <Label htmlFor="label">Question</Label>
               <Input
-                id="options"
-                value={options}
-                onChange={(event) => setOptions(event.target.value)}
-                placeholder="Naruto, Luffy, Eren"
+                id="label"
+                value={label}
+                onChange={(event) => setLabel(event.target.value)}
                 required
+                placeholder="What did you enjoy most?"
               />
             </div>
-          ) : null}
-          <label className="flex items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              checked={required}
-              onChange={(event) => setRequired(event.target.checked)}
-            />
-            Required question
-          </label>
-          <Button type="submit" className="bg-primary" disabled={saving}>
-            {saving ? "Saving..." : "Add question"}
-          </Button>
-        </form>
 
-        <div className="bg-card/30 border border-primary/10 rounded-xl p-6">
-          <h2 className="text-lg font-semibold mb-4">Questions ({fields.length})</h2>
-          <div className="space-y-3">
-            {fields.map((field, index) => (
-              <div key={field.id} className="rounded-lg border border-primary/10 p-3">
-                <p className="font-medium">
-                  {index + 1}. {field.label}
-                </p>
-                <p className="text-sm text-foreground/60">
-                  {field.fieldType} {field.isRequired ? "• required" : ""}
-                </p>
+            <div className="space-y-2">
+              <Label htmlFor="fieldType">Answer type</Label>
+              <select
+                id="fieldType"
+                value={fieldType}
+                onChange={(event) => setFieldType(event.target.value as FieldType)}
+                className="w-full rounded-md border border-primary/20 bg-[#060913] px-3 py-2 text-sm"
+              >
+                {Object.entries(FIELD_TYPE_LABELS).map(([value, text]) => (
+                  <option key={value} value={value}>
+                    {text}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="placeholder">Placeholder</Label>
+              <Input
+                id="placeholder"
+                value={placeholder}
+                onChange={(event) => setPlaceholder(event.target.value)}
+                placeholder="Optional hint text"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="helpText">Help text</Label>
+              <Textarea
+                id="helpText"
+                value={helpText}
+                onChange={(event) => setHelpText(event.target.value)}
+                placeholder="Optional guidance for respondents"
+                rows={2}
+              />
+            </div>
+
+            {canHaveOptions ? (
+              <div className="space-y-2">
+                <Label htmlFor="options">Options (comma separated)</Label>
+                <Input
+                  id="options"
+                  value={options}
+                  onChange={(event) => setOptions(event.target.value)}
+                  placeholder="Naruto, Luffy, Eren"
+                  required
+                />
               </div>
-            ))}
-            {fields.length === 0 ? (
-              <p className="text-sm text-foreground/60">No questions yet. Add your first question.</p>
             ) : null}
+
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={required}
+                onChange={(event) => setRequired(event.target.checked)}
+              />
+              Required question
+            </label>
+
+            <Button type="submit" className="w-full bg-primary" disabled={saving}>
+              {saving ? "Adding..." : "Add question"}
+            </Button>
+          </form>
+
+          <div className="lg:col-span-3 bg-card/30 border border-primary/10 rounded-2xl p-6">
+            <h2 className="text-lg font-semibold mb-4">Questions ({fields.length})</h2>
+            <div className="space-y-3">
+              {fields.map((field, index) => (
+                <div
+                  key={field.id}
+                  className="rounded-xl border border-primary/10 p-4 bg-[#060913]/40"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex gap-3">
+                      <GripVertical className="w-4 h-4 text-foreground/30 mt-1 shrink-0" />
+                      <div>
+                        <p className="font-semibold text-white">
+                          {index + 1}. {field.label}
+                        </p>
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          <Badge variant="outline">{FIELD_TYPE_LABELS[field.fieldType as FieldType]}</Badge>
+                          {field.isRequired ? <Badge className="bg-red-500/15 text-red-300">Required</Badge> : null}
+                        </div>
+                        {field.helpText ? (
+                          <p className="text-xs text-foreground/50 mt-2">{field.helpText}</p>
+                        ) : null}
+                        {field.options.length > 0 ? (
+                          <p className="text-xs text-foreground/50 mt-2">
+                            Options: {field.options.map((option) => option.label).join(", ")}
+                          </p>
+                        ) : null}
+                      </div>
+                    </div>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      className="text-red-400 border-red-400/20"
+                      disabled={deletingId === field.id}
+                      onClick={() => handleDeleteField(field.id)}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+              {fields.length === 0 ? (
+                <div className="rounded-xl border border-dashed border-primary/20 p-10 text-center">
+                  <p className="text-foreground/60">No questions yet.</p>
+                  <p className="text-sm text-foreground/40 mt-1">
+                    Add your first question using the panel on the left.
+                  </p>
+                </div>
+              ) : null}
+            </div>
           </div>
         </div>
       </div>

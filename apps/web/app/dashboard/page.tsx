@@ -40,6 +40,17 @@ export default function DashboardPage() {
     }
   }, [loading, isAuthenticated, user]);
 
+  const filteredForms = useMemo(() => {
+    return forms
+      .filter((f) => f.title.toLowerCase().includes(query.toLowerCase()))
+      .filter((f) => (filter === "ALL" ? true : f.visibility === filter));
+  }, [forms, query, filter]);
+
+  const publishedCount = useMemo(
+    () => forms.filter((form) => form.status === "PUBLISHED").length,
+    [forms],
+  );
+
   if (loading || !isAuthenticated || !user) {
     return (
       <div className="min-h-screen bg-[#060913] flex flex-col items-center justify-center">
@@ -56,14 +67,6 @@ export default function DashboardPage() {
       console.error(err);
     }
   };
-
-  const filteredForms = useMemo(() => {
-    return forms
-      .filter((f) => f.title.toLowerCase().includes(query.toLowerCase()))
-      .filter((f) => (filter === "ALL" ? true : f.visibility === filter));
-  }, [forms, query, filter]);
-
-  const publishedCount = forms.filter((form) => form.status === "PUBLISHED").length;
 
   return (
     <div className="min-h-screen bg-[#060913] text-foreground relative pb-16">
@@ -231,6 +234,13 @@ export default function DashboardPage() {
                       </p>
                     </div>
                     <div className="mt-4 flex flex-wrap gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => router.push(`/dashboard/forms/${f.id}/settings`)}
+                      >
+                        Details
+                      </Button>
                       <Button
                         size="sm"
                         onClick={() => router.push(`/dashboard/forms/${f.id}/builder`)}

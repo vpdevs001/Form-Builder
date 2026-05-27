@@ -2,9 +2,12 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
+import { getFormTheme } from "~/lib/form-themes";
+import { cn } from "~/lib/utils";
 import { api } from "~/trpc/server";
 import { toast } from "sonner";
 
@@ -47,8 +50,10 @@ export default function FillFormPage() {
     load();
   }, [shareId]);
 
+  const theme = useMemo(() => getFormTheme(form?.theme), [form?.theme]);
   const currentField = useMemo(() => fields[currentIndex], [fields, currentIndex]);
   const isLastQuestion = currentIndex === fields.length - 1;
+  const progress = fields.length > 0 ? ((currentIndex + 1) / fields.length) * 100 : 0;
 
   const setAnswer = (fieldId: string, value: string | string[]) => {
     setAnswers((previous) => ({ ...previous, [fieldId]: value }));
@@ -127,7 +132,8 @@ export default function FillFormPage() {
       });
 
       const message = encodeURIComponent(form.thankYouMessage || "Thank you for your response!");
-      router.push(`/forms/${shareId}/thank-you?message=${message}`);
+      const themeParam = encodeURIComponent(form.theme);
+      router.push(`/forms/${shareId}/thank-you?message=${message}&theme=${themeParam}`);
     } catch (submitError: any) {
       toast.error(submitError.message || "Failed to submit form");
     } finally {
@@ -136,7 +142,7 @@ export default function FillFormPage() {
   };
 
   if (loading) {
-    return <div className="min-h-screen bg-[#060913]" />;
+    return <div className={cn("min-h-screen", getFormTheme().bg)} />;
   }
 
   if (error || !form) {
@@ -152,8 +158,9 @@ export default function FillFormPage() {
 
   if (!currentField) {
     return (
-      <div className="min-h-screen bg-[#060913] text-foreground flex items-center justify-center p-4">
-        <div className="max-w-lg w-full bg-card/30 border border-primary/10 rounded-xl p-6 text-center">
+      <div className={cn("min-h-screen text-foreground flex items-center justify-center p-4", theme.bg)}>
+        <div className={cn("max-w-lg w-full rounded-2xl p-6 text-center border backdrop-blur-md", theme.card)}>
+          <p className={cn("text-xs uppercase tracking-widest mb-2", theme.accentText)}>{theme.japanese}</p>
           <h1 className="text-2xl font-bold mb-2">{form.title}</h1>
           <p className="text-foreground/70">This form has no questions yet.</p>
         </div>
@@ -164,89 +171,138 @@ export default function FillFormPage() {
   const answer = answers[currentField.id];
 
   return (
-    <div className="min-h-screen bg-[#060913] text-foreground py-14 px-4">
-      <div className="max-w-2xl mx-auto">
-        <div className="bg-card/30 border border-primary/10 rounded-xl p-6">
-          <p className="text-sm text-primary mb-2">
-            Question {currentIndex + 1} of {fields.length}
-          </p>
-          <h1 className="text-2xl font-bold">{form.title}</h1>
-          <p className="text-foreground/70 mt-1">{currentField.label}</p>
-          {currentField.isRequired ? (
-            <p className="text-xs text-red-400 mt-1">Required question</p>
-          ) : null}
+    <div className={cn("min-h-screen text-foreground relative overflow-hidden", theme.bg)}>
+      <div className={cn("absolute inset-0 bg-gradient-to-br pointer-events-none", theme.glow)} />
 
-          <div className="mt-5 space-y-3">
-            {["SHORT_TEXT", "EMAIL", "NUMBER", "DATE"].includes(currentField.fieldType) ? (
-              <Input
-                type={
-                  currentField.fieldType === "EMAIL"
-                    ? "email"
-                    : currentField.fieldType === "NUMBER"
-                      ? "number"
-                      : currentField.fieldType === "DATE"
-                        ? "date"
-                        : "text"
-                }
-                value={typeof answer === "string" ? answer : ""}
-                onChange={(event) => setAnswer(currentField.id, event.target.value)}
-                placeholder={currentField.placeholder || "Type your answer"}
+      <div className="relative z-10 min-h-screen flex flex-col">
+        <div className="px-4 pt-6">
+          <div className="max-w-2xl mx-auto">
+            <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
+              <div
+                className={cn("h-full transition-all duration-300", theme.progress)}
+                style={{ width: `${progress}%` }}
               />
-            ) : null}
-
-            {currentField.fieldType === "LONG_TEXT" ? (
-              <Textarea
-                value={typeof answer === "string" ? answer : ""}
-                onChange={(event) => setAnswer(currentField.id, event.target.value)}
-                placeholder={currentField.placeholder || "Type your answer"}
-              />
-            ) : null}
-
-            {currentField.fieldType === "SINGLE_SELECT" || currentField.fieldType === "DROPDOWN" ? (
-              <div className="space-y-2">
-                {currentField.options.map((option) => (
-                  <label key={option.id} className="flex items-center gap-2 text-sm">
-                    <input
-                      type="radio"
-                      name={currentField.id}
-                      checked={answer === option.value}
-                      onChange={() => setAnswer(currentField.id, option.value)}
-                    />
-                    {option.label}
-                  </label>
-                ))}
-              </div>
-            ) : null}
-
-            {currentField.fieldType === "MULTI_SELECT" || currentField.fieldType === "CHECKBOX" ? (
-              <div className="space-y-2">
-                {currentField.options.map((option) => (
-                  <label key={option.id} className="flex items-center gap-2 text-sm">
-                    <input
-                      type="checkbox"
-                      checked={Array.isArray(answer) ? answer.includes(option.value) : false}
-                      onChange={() => toggleMultiOption(currentField.id, option.value)}
-                    />
-                    {option.label}
-                  </label>
-                ))}
-              </div>
-            ) : null}
+            </div>
+            <p className={cn("text-xs mt-3 font-semibold tracking-wide", theme.accentText)}>
+              {theme.label} • Question {currentIndex + 1} of {fields.length}
+            </p>
           </div>
+        </div>
 
-          <div className="mt-8 flex gap-3">
-            <Button variant="outline" onClick={goPrevious} disabled={currentIndex === 0}>
-              Previous
-            </Button>
-            {!isLastQuestion ? (
-              <Button className="bg-primary" onClick={goNext}>
-                Next
-              </Button>
+        <div className="flex-1 flex items-center justify-center px-4 py-10">
+          <div className={cn("max-w-2xl w-full rounded-2xl border backdrop-blur-md p-8 shadow-2xl", theme.card)}>
+            {currentIndex === 0 && form.description ? (
+              <p className="text-sm text-foreground/60 mb-4">{form.description}</p>
+            ) : null}
+
+            <p className={cn("text-xs uppercase tracking-[0.2em] mb-3", theme.accentText)}>
+              {theme.japanese}
+            </p>
+            <h1 className="text-3xl font-extrabold leading-tight mb-2">{currentField.label}</h1>
+            {currentField.helpText ? (
+              <p className="text-sm text-foreground/60 mb-2">{currentField.helpText}</p>
+            ) : null}
+            {currentField.isRequired ? (
+              <p className="text-xs text-red-400 mb-6">Required</p>
             ) : (
-              <Button className="bg-primary" onClick={submit} disabled={submitting}>
-                {submitting ? "Submitting..." : "Submit"}
-              </Button>
+              <div className="mb-6" />
             )}
+
+            <div className="space-y-3">
+              {["SHORT_TEXT", "EMAIL", "NUMBER", "DATE"].includes(currentField.fieldType) ? (
+                <Input
+                  type={
+                    currentField.fieldType === "EMAIL"
+                      ? "email"
+                      : currentField.fieldType === "NUMBER"
+                        ? "number"
+                        : currentField.fieldType === "DATE"
+                          ? "date"
+                          : "text"
+                  }
+                  value={typeof answer === "string" ? answer : ""}
+                  onChange={(event) => setAnswer(currentField.id, event.target.value)}
+                  placeholder={currentField.placeholder || "Type your answer"}
+                  className="py-6 text-base bg-black/30 border-white/10"
+                />
+              ) : null}
+
+              {currentField.fieldType === "LONG_TEXT" ? (
+                <Textarea
+                  value={typeof answer === "string" ? answer : ""}
+                  onChange={(event) => setAnswer(currentField.id, event.target.value)}
+                  placeholder={currentField.placeholder || "Type your answer"}
+                  className="min-h-32 text-base bg-black/30 border-white/10"
+                />
+              ) : null}
+
+              {currentField.fieldType === "SINGLE_SELECT" ||
+              currentField.fieldType === "DROPDOWN" ||
+              currentField.fieldType === "RATING" ? (
+                <div className="grid gap-2">
+                  {currentField.options.map((option) => (
+                    <button
+                      key={option.id}
+                      type="button"
+                      onClick={() => setAnswer(currentField.id, option.value)}
+                      className={cn(
+                        "rounded-xl border px-4 py-3 text-left transition-all cursor-pointer",
+                        answer === option.value
+                          ? `${theme.border} bg-white/10`
+                          : "border-white/10 hover:border-white/25 bg-black/20",
+                      )}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+
+              {currentField.fieldType === "MULTI_SELECT" || currentField.fieldType === "CHECKBOX" ? (
+                <div className="grid gap-2">
+                  {currentField.options.map((option) => {
+                    const selected = Array.isArray(answer) ? answer.includes(option.value) : false;
+                    return (
+                      <button
+                        key={option.id}
+                        type="button"
+                        onClick={() => toggleMultiOption(currentField.id, option.value)}
+                        className={cn(
+                          "rounded-xl border px-4 py-3 text-left transition-all cursor-pointer",
+                          selected
+                            ? `${theme.border} bg-white/10`
+                            : "border-white/10 hover:border-white/25 bg-black/20",
+                        )}
+                      >
+                        {option.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              ) : null}
+            </div>
+
+            <div className="mt-10 flex flex-wrap gap-3">
+              <Button
+                variant="outline"
+                onClick={goPrevious}
+                disabled={currentIndex === 0}
+                className="border-white/15 bg-transparent"
+              >
+                <ChevronLeft className="w-4 h-4 mr-1" />
+                Previous
+              </Button>
+              {!isLastQuestion ? (
+                <Button className={theme.button} onClick={goNext}>
+                  Next
+                  <ChevronRight className="w-4 h-4 ml-1" />
+                </Button>
+              ) : (
+                <Button className={theme.button} onClick={submit} disabled={submitting}>
+                  {submitting ? "Submitting..." : "Submit"}
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       </div>

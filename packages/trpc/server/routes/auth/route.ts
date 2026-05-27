@@ -139,11 +139,26 @@ export const authRouter = router({
 
   changePassword: protectedProcedure
     .meta({ openapi: { method: "POST", path: getPath("/change-password"), tags: TAGS } })
-    .input(changePasswordInputSchema)
+    .input(changePasswordInputSchema.partial({ refreshToken: true }).required({ currentPassword: true, newPassword: true }))
     .output(z.object({ success: z.boolean() }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       try {
-        return { success: await userService.changePassword(input) };
+        let token = input.refreshToken;
+        if (!token && ctx.req?.headers?.cookie) {
+          const cookies = parseCookies(ctx.req.headers.cookie);
+          token = cookies["refreshToken"];
+        }
+        if (!token) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Refresh token is required" });
+        }
+        const success = await userService.changePassword({
+          refreshToken: token,
+          currentPassword: input.currentPassword,
+          newPassword: input.newPassword,
+        });
+        ctx.res.clearCookie("accessToken", { path: "/" });
+        ctx.res.clearCookie("refreshToken", { path: "/" });
+        return { success };
       } catch (error) {
         handleTRPCError(error, "Failed to change password");
       }
@@ -151,15 +166,28 @@ export const authRouter = router({
 
   changeUserDetails: protectedProcedure
     .meta({ openapi: { method: "POST", path: getPath("/change-user-details"), tags: TAGS } })
-    .input(changeUserDetailsInputSchema)
+    .input(changeUserDetailsInputSchema.partial({ refreshToken: true }))
     .output(userPublicSchema)
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       try {
         if (!input.firstName && !input.lastName && !input.email) {
           throw new TRPCError({ code: "BAD_REQUEST", message: "At least one detail must be changed" });
         }
+        let token = input.refreshToken;
+        if (!token && ctx.req?.headers?.cookie) {
+          const cookies = parseCookies(ctx.req.headers.cookie);
+          token = cookies["refreshToken"];
+        }
+        if (!token) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Refresh token is required" });
+        }
 
-        return await userService.changeUserDetails(input);
+        return await userService.changeUserDetails({
+          refreshToken: token,
+          firstName: input.firstName,
+          lastName: input.lastName,
+          email: input.email,
+        });
       } catch (error) {
         handleTRPCError(error, "Failed to change user details");
       }
