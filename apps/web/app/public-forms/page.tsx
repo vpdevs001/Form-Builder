@@ -62,7 +62,9 @@ export default function PublicFormsPage() {
                     <span className="text-xs text-foreground/50">
                       By {f.creatorName || f.creatorId}
                     </span>
-                    <Button size="sm">View</Button>
+                    <Button size="sm" onClick={() => router.push(`/forms/${f.shareId}`)}>
+                      View
+                    </Button>
                   </div>
                 </CardContent>
               </Card>

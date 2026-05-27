@@ -48,6 +48,10 @@ export const DeleteFormFieldSchema = z.object({
   id: z.uuid().describe("ID of the field to delete (UUID)"),
 });
 
+export const FormFieldFormIdSchema = z.object({
+  formId: z.uuid().describe("ID of the parent form (UUID)"),
+});
+
 export const fieldOptionPublicSchema = z.object({
   id: z.uuid().describe("Option ID"),
   fieldId: z.uuid().describe("Field ID"),
@@ -76,4 +80,5 @@ export const formFieldPublicSchema = z.object({
 export type CreateFormFieldInput = z.infer<typeof CreateFormFieldSchema>;
 export type UpdateFormFieldInput = z.infer<typeof UpdateFormFieldSchema>;
 export type DeleteFormFieldInput = z.infer<typeof DeleteFormFieldSchema>;
+export type FormFieldFormIdInput = z.infer<typeof FormFieldFormIdSchema>;
 export type FormFieldPublic = z.infer<typeof formFieldPublicSchema>;

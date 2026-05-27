@@ -1,20 +1,11 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "~/providers/auth-provider";
 import { Button } from "~/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "~/components/ui/card";
-import {
-  Loader2,
-  Plus,
-  Sparkles,
-  LogOut,
-  FileText,
-  BarChart3,
-  Users,
-  Settings,
-} from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Loader2, Plus, Sparkles, FileText, Globe, BarChart3, Settings } from "lucide-react";
 import { api } from "~/trpc/server";
 import {
   DropdownMenu,
@@ -28,7 +19,9 @@ import { Input } from "~/components/ui/input";
 export default function DashboardPage() {
   const router = useRouter();
   const { user, loading, isAuthenticated, logout } = useAuth();
-  const [forms, setForms] = useState<any[]>([]);
+  const [forms, setForms] = useState<
+    Awaited<ReturnType<typeof api.form.getByCreator.query>>
+  >([]);
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<"ALL" | "PUBLIC" | "PRIVATE" | "UNLISTED">("ALL");
 
@@ -64,6 +57,14 @@ export default function DashboardPage() {
     }
   };
 
+  const filteredForms = useMemo(() => {
+    return forms
+      .filter((f) => f.title.toLowerCase().includes(query.toLowerCase()))
+      .filter((f) => (filter === "ALL" ? true : f.visibility === filter));
+  }, [forms, query, filter]);
+
+  const publishedCount = forms.filter((form) => form.status === "PUBLISHED").length;
+
   return (
     <div className="min-h-screen bg-[#060913] text-foreground relative pb-16">
       {/* Background Chakra Aura glow */}
@@ -89,7 +90,10 @@ export default function DashboardPage() {
             </p>
           </div>
           <div className="flex gap-3 w-full sm:w-auto">
-            <Button className="w-full sm:w-auto bg-primary hover:bg-primary/95 text-white font-bold gap-1.5 py-5 px-5 rounded-xl shadow-[0_0_15px_rgba(255,107,0,0.3)] transition-all">
+            <Button
+              onClick={() => router.push("/dashboard/forms/new")}
+              className="w-full sm:w-auto bg-primary hover:bg-primary/95 text-white font-bold gap-1.5 py-5 px-5 rounded-xl shadow-[0_0_15px_rgba(255,107,0,0.3)] transition-all"
+            >
               <Plus className="w-4 h-4" />
               Create Form
             </Button>
@@ -125,33 +129,26 @@ export default function DashboardPage() {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {/* Card 1: Total Forms */}
           <Card className="bg-card/30 backdrop-blur-sm border border-primary/10 hover:border-primary/20 transition-all shadow-[0_4px_20px_rgba(0,0,0,0.2)]">
             <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
               <CardTitle className="text-sm font-bold text-foreground/60">Total Forms</CardTitle>
               <FileText className="w-4 h-4 text-primary" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-extrabold text-white">0</div>
-              <p className="text-xs text-foreground/45 mt-1 font-medium">No forms drafted yet</p>
+              <div className="text-3xl font-extrabold text-white">{forms.length}</div>
+              <p className="text-xs text-foreground/45 mt-1 font-medium">Forms in your workspace</p>
             </CardContent>
           </Card>
-
-          {/* Card 2: Submissions */}
           <Card className="bg-card/30 backdrop-blur-sm border border-primary/10 hover:border-secondary/20 transition-all shadow-[0_4px_20px_rgba(0,0,0,0.2)]">
             <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-              <CardTitle className="text-sm font-bold text-foreground/60 font-heading">
-                Total Submissions
-              </CardTitle>
-              <Users className="w-4 h-4 text-secondary" />
+              <CardTitle className="text-sm font-bold text-foreground/60">Published</CardTitle>
+              <Globe className="w-4 h-4 text-secondary" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-extrabold text-white">0</div>
-              <p className="text-xs text-foreground/45 mt-1 font-medium">Waiting for respondents</p>
+              <div className="text-3xl font-extrabold text-white">{publishedCount}</div>
+              <p className="text-xs text-foreground/45 mt-1 font-medium">Live and accepting traffic</p>
             </CardContent>
           </Card>
-
-          {/* Card 3: Completion Rate */}
           <Card className="bg-card/30 backdrop-blur-sm border border-primary/10 hover:border-accent/20 transition-all shadow-[0_4px_20px_rgba(0,0,0,0.2)]">
             <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
               <CardTitle className="text-sm font-bold text-foreground/60">
@@ -160,14 +157,14 @@ export default function DashboardPage() {
               <BarChart3 className="w-4 h-4 text-accent" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-extrabold text-white">0%</div>
+              <div className="text-3xl font-extrabold text-white">
+                {forms.length > 0 ? Math.round((publishedCount / forms.length) * 100) : 0}%
+              </div>
               <p className="text-xs text-foreground/45 mt-1 font-medium">
-                No submissions registered
+                Published form ratio
               </p>
             </CardContent>
           </Card>
-
-          {/* Card 4: API Status */}
           <Card className="bg-card/30 backdrop-blur-sm border border-primary/10 hover:border-primary/20 transition-all shadow-[0_4px_20px_rgba(0,0,0,0.2)]">
             <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
               <CardTitle className="text-sm font-bold text-foreground/60 font-heading">
@@ -183,10 +180,7 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
         </div>
-
-        {/* Empty State Banner */}
         <div className="bg-card/20 border border-primary/5 rounded-2xl p-6 text-center flex flex-col items-center justify-center shadow-lg">
-          {/* Forms list header: search and filter */}
           <div className="w-full max-w-4xl mx-auto mb-4 flex flex-col sm:flex-row items-center gap-3">
             <Input
               value={query}
@@ -203,73 +197,68 @@ export default function DashboardPage() {
               <option value="PRIVATE">Private</option>
               <option value="UNLISTED">Unlisted</option>
             </select>
-            <Button className="bg-primary">Create New Form</Button>
+            <Button onClick={() => router.push("/dashboard/forms/new")} className="bg-primary">
+              Create New Form
+            </Button>
           </div>
 
-          {/* Forms grid */}
           <div className="w-full max-w-6xl mx-auto">
-            {forms
-              .filter((f) => {
-                if (!query) return true;
-                return f.title?.toLowerCase().includes(query.toLowerCase());
-              })
-              .filter((f) => {
-                if (filter === "ALL") return true;
-                return f.visibility === filter;
-              }).length === 0 ? (
+            {filteredForms.length === 0 ? (
               <div className="p-12">
                 <div className="p-4 rounded-full bg-primary/5 border border-primary/10 mb-4 animate-float-medium">
                   <FileText className="w-8 h-8 text-primary" />
                 </div>
                 <h3 className="text-lg font-extrabold text-white mb-2">
-                  No forms created yet, go create one
+                  No forms found
                 </h3>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {forms
-                  .filter((f) => {
-                    if (!query) return true;
-                    return f.title?.toLowerCase().includes(query.toLowerCase());
-                  })
-                  .filter((f) => {
-                    if (filter === "ALL") return true;
-                    return f.visibility === filter;
-                  })
-                  .map((f) => (
-                    <div key={f.id} className="bg-card/30 border border-primary/10 rounded-xl p-4">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h4 className="font-bold text-white">{f.title}</h4>
-                          <p className="text-sm text-foreground/60">{f.description}</p>
-                          <p className="text-xs text-foreground/40 mt-2">
-                            Visibility: {f.visibility}
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-xs text-foreground/50">
-                            {new Date(f.createdAt).toLocaleDateString()}
-                          </p>
-                        </div>
+                {filteredForms.map((f) => (
+                  <div key={f.id} className="bg-card/30 border border-primary/10 rounded-xl p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <h4 className="font-bold text-white">{f.title}</h4>
+                        <p className="text-sm text-foreground/60 line-clamp-2">
+                          {f.description || "No description"}
+                        </p>
+                        <p className="text-xs text-foreground/40 mt-2">
+                          {f.visibility} • {f.status}
+                        </p>
                       </div>
+                      <p className="text-xs text-foreground/50 whitespace-nowrap">
+                        {new Date(f.createdAt).toLocaleDateString()}
+                      </p>
                     </div>
-                  ))}
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      <Button
+                        size="sm"
+                        onClick={() => router.push(`/dashboard/forms/${f.id}/builder`)}
+                        className="bg-primary"
+                      >
+                        Builder
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => router.push(`/dashboard/forms/${f.id}/responses`)}
+                      >
+                        Responses
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => router.push(`/forms/${f.shareId}`)}
+                      >
+                        Fill Page
+                      </Button>
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
           </div>
         </div>
-        <div className="p-4 rounded-full bg-primary/5 border border-primary/10 mb-4 animate-float-medium">
-          <FileText className="w-8 h-8 text-primary" />
-        </div>
-        <h3 className="text-lg font-extrabold text-white mb-2">No Forms Found</h3>
-        <p className="text-sm text-foreground/50 max-w-md mb-6 font-medium">
-          Ready to craft your first Naruto, Death Note, or AoT themed questionnaire? Get started by
-          building a form layout instantly.
-        </p>
-        <Button className="bg-primary hover:bg-primary/95 text-white font-bold gap-1.5 py-4 px-6 rounded-xl shadow-[0_0_15px_rgba(255,107,0,0.3)] transition-all">
-          <Plus className="w-4 h-4" />
-          Create Your First Form
-        </Button>
       </div>
     </div>
   );

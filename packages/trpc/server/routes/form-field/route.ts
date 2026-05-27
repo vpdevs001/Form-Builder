@@ -1,9 +1,10 @@
-import { protectedProcedure, router } from "../../trpc";
+import { protectedProcedure, publicProcedure, router } from "../../trpc";
 import { formFieldService } from "../../services";
 import { generatePath } from "../../utils/path-generator";
 import {
   CreateFormFieldSchema,
   DeleteFormFieldSchema,
+  FormFieldFormIdSchema,
   formFieldPublicSchema,
   UpdateFormFieldSchema,
 } from "./model";
@@ -14,6 +15,21 @@ const TAGS = ["Form Fields"];
 const getPath = generatePath("/form-fields");
 
 export const formFieldRouter = router({
+  // ── GET /form-fields/by-form-id ────────────────────────────────────────────
+  getByFormId: publicProcedure
+    .meta({
+      openapi: { method: "GET", path: getPath("/by-form-id"), tags: TAGS },
+    })
+    .input(FormFieldFormIdSchema)
+    .output(formFieldPublicSchema.array())
+    .query(async ({ input }) => {
+      try {
+        return await formFieldService.getFieldsByFormId(input.formId);
+      } catch (error) {
+        handleTRPCError(error, "Failed to fetch form fields by form id");
+      }
+    }),
+
   // ── POST /form-fields/create ──────────────────────────────────────────────
   create: protectedProcedure
     .meta({ openapi: { method: "POST", path: getPath("/create"), tags: TAGS } })

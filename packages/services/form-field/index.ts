@@ -134,6 +134,30 @@ class FormFieldService {
     await db.delete(formFields).where(eq(formFields.id, id));
     return true;
   }
+
+  public async getFieldsByFormId(formId: string): Promise<FormFieldPublic[]> {
+    const fields = await db
+      .select()
+      .from(formFields)
+      .where(eq(formFields.formId, formId))
+      .orderBy(formFields.fieldOrder);
+
+    const options = await db.select().from(fieldOptions);
+    const optionsByField = new Map<string, FieldOption[]>();
+
+    for (const option of options) {
+      const current = optionsByField.get(option.fieldId) ?? [];
+      current.push(option);
+      optionsByField.set(option.fieldId, current);
+    }
+
+    return fields.map((field) => {
+      const fieldOpts = (optionsByField.get(field.id) ?? []).sort(
+        (left, right) => left.optionOrder - right.optionOrder,
+      );
+      return toPublicFormField(field, fieldOpts);
+    });
+  }
 }
 
 export default FormFieldService;
