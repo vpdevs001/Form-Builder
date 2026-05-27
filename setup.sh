@@ -12,7 +12,7 @@ for dir in apps/* packages/*; do
     target="$dir/.env"
     if [ ! -L "$target" ] || [ "$(readlink -- "$target")" != "$(realpath .env)" ]; then
       if [ ! -e "$target" ]; then
-        ln .env "$target"
+        link .env "$target"
       fi
     fi
   fi

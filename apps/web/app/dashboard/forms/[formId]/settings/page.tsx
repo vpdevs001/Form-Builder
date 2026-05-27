@@ -2,7 +2,7 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Copy, ExternalLink, Loader2 } from "lucide-react";
+import { Copy, ExternalLink, Loader2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { FormWorkspaceNav } from "~/components/forms/form-workspace-nav";
 import { ThemePicker } from "~/components/forms/theme-picker";
@@ -30,6 +30,7 @@ export default function FormSettingsPage() {
   const [notifyCreator, setNotifyCreator] = useState(true);
   const [notifyRespondent, setNotifyRespondent] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const loadForm = async () => {
     try {
@@ -98,6 +99,22 @@ export default function FormSettingsPage() {
     const url = `${window.location.origin}/forms/${form.shareId}`;
     await navigator.clipboard.writeText(url);
     toast.success("Share link copied.");
+  };
+
+  const handleDeleteForm = async () => {
+    if (!form) return;
+    const ok = window.confirm("Delete this form and all related data? This cannot be undone.");
+    if (!ok) return;
+    setDeleting(true);
+    try {
+      await api.form.delete.mutate({ id: form.id });
+      toast.success("Form deleted.");
+      router.push("/dashboard");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to delete form");
+    } finally {
+      setDeleting(false);
+    }
   };
 
   if (loading || !isAuthenticated) {
@@ -216,6 +233,25 @@ export default function FormSettingsPage() {
                   Preview form
                 </Button>
               </div>
+            </section>
+          ) : null}
+
+          {form ? (
+            <section className="bg-card/30 border border-red-500/20 rounded-2xl p-6">
+              <h2 className="text-lg font-semibold mb-2 text-red-300">Danger zone</h2>
+              <p className="text-sm text-foreground/60 mb-4">
+                Permanently delete this form and its responses.
+              </p>
+              <Button
+                type="button"
+                variant="outline"
+                className="border-red-400/30 text-red-300"
+                disabled={deleting}
+                onClick={handleDeleteForm}
+              >
+                <Trash2 className="w-4 h-4 mr-1" />
+                {deleting ? "Deleting..." : "Delete form"}
+              </Button>
             </section>
           ) : null}
 

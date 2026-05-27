@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Download, Loader2 } from "lucide-react";
+import { Download, Loader2, Trash2, TrendingUp } from "lucide-react";
 import { toast } from "sonner";
 import { FormWorkspaceNav } from "~/components/forms/form-workspace-nav";
 import { useAuth } from "~/providers/auth-provider";
@@ -18,13 +18,18 @@ export default function FormResponsesPage() {
 
   const [form, setForm] = useState<Awaited<ReturnType<typeof api.form.getById.query>> | null>(null);
   const [summary, setSummary] = useState<Awaited<ReturnType<typeof api.analytics.getFormSummary.query>> | null>(null);
-  const [submissions, setSubmissions] = useState<
-    Awaited<ReturnType<typeof api.analytics.getRecentSubmissions.query>>
-  >([]);
+  const [submissions, setSubmissions] = useState<Awaited<ReturnType<typeof api.submission.getByFormId.query>>>([]);
   const [fieldBreakdown, setFieldBreakdown] = useState<
     Awaited<ReturnType<typeof api.analytics.getFieldBreakdown.query>>
   >([]);
+  const [trend, setTrend] = useState<Awaited<ReturnType<typeof api.analytics.getSubmissionTrend.query>>>([]);
+  const [selectedFieldId, setSelectedFieldId] = useState<string>("");
+  const [selectedFieldValues, setSelectedFieldValues] = useState<
+    Awaited<ReturnType<typeof api.submissionValue.getByFieldId.query>>
+  >([]);
+  const [loadingValues, setLoadingValues] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [deletingSubmissionId, setDeletingSubmissionId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
@@ -34,11 +39,12 @@ export default function FormResponsesPage() {
 
     const load = async () => {
       try {
-        const [formData, summaryData, recentData, breakdownData] = await Promise.all([
+        const [formData, summaryData, submissionData, breakdownData, trendData] = await Promise.all([
           api.form.getById.query({ id: formId }),
           api.analytics.getFormSummary.query({ formId }),
-          api.analytics.getRecentSubmissions.query({ formId, limit: 50 }),
+          api.submission.getByFormId.query({ id: formId }),
           api.analytics.getFieldBreakdown.query({ formId }),
+          api.analytics.getSubmissionTrend.query({ formId, interval: "DAY" }),
         ]);
         if (user && formData.creatorId !== user.id) {
           toast.error("You do not have access to this form.");
@@ -47,8 +53,12 @@ export default function FormResponsesPage() {
         }
         setForm(formData);
         setSummary(summaryData);
-        setSubmissions(recentData);
+        setSubmissions(submissionData);
         setFieldBreakdown(breakdownData);
+        setTrend(trendData);
+        if (breakdownData.length > 0 && !selectedFieldId) {
+          setSelectedFieldId(breakdownData[0]!.fieldId);
+        }
       } catch (error: any) {
         toast.error(error.message || "Failed to load responses");
       }
@@ -57,7 +67,35 @@ export default function FormResponsesPage() {
     if (!loading && isAuthenticated && user) {
       load();
     }
-  }, [loading, isAuthenticated, user, router, formId]);
+  }, [loading, isAuthenticated, user, router, formId, selectedFieldId]);
+
+  useEffect(() => {
+    if (!selectedFieldId) {
+      setSelectedFieldValues([]);
+      return;
+    }
+    let active = true;
+    setLoadingValues(true);
+    api.submissionValue
+      .getByFieldId.query({ fieldId: selectedFieldId })
+      .then((values) => {
+        if (active) setSelectedFieldValues(values);
+      })
+      .catch((error: any) => {
+        if (active) toast.error(error.message || "Failed to load field values");
+      })
+      .finally(() => {
+        if (active) setLoadingValues(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [selectedFieldId]);
+
+  const trendTotal = useMemo(
+    () => trend.reduce((acc, point) => acc + point.count, 0),
+    [trend],
+  );
 
   const exportSummaryCsv = () => {
     if (!summary || !form) return;
@@ -116,6 +154,19 @@ export default function FormResponsesPage() {
       exportBreakdownCsv();
     } finally {
       setExporting(false);
+    }
+  };
+
+  const handleDeleteSubmission = async (submissionId: string) => {
+    setDeletingSubmissionId(submissionId);
+    try {
+      await api.submission.delete.mutate({ id: submissionId });
+      setSubmissions((prev) => prev.filter((submission) => submission.id !== submissionId));
+      toast.success("Submission deleted.");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to delete submission");
+    } finally {
+      setDeletingSubmissionId(null);
     }
   };
 
@@ -183,7 +234,54 @@ export default function FormResponsesPage() {
         </div>
 
         <div className="bg-card/30 border border-primary/10 rounded-xl p-6">
+          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <TrendingUp className="w-4 h-4 text-primary" />
+            Submission trend (daily)
+          </h2>
+          {trend.length > 0 ? (
+            <div className="space-y-2">
+              <p className="text-sm text-foreground/60">Total points: {trend.length} • Total submissions: {trendTotal}</p>
+              {trend.slice(-10).map((point) => (
+                <div key={point.period} className="flex items-center gap-2">
+                  <p className="w-28 text-xs text-foreground/60">{point.period}</p>
+                  <div className="h-2 rounded bg-primary/80" style={{ width: `${Math.max(point.count * 20, 8)}px` }} />
+                  <span className="text-xs text-foreground/70">{point.count}</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-foreground/60">No trend data yet.</p>
+          )}
+        </div>
+
+        <div className="bg-card/30 border border-primary/10 rounded-xl p-6">
           <h2 className="text-lg font-semibold mb-4">Field breakdown</h2>
+          <div className="mb-4">
+            <label className="text-xs text-foreground/60 block mb-1">Inspect raw values for field</label>
+            <select
+              value={selectedFieldId}
+              onChange={(e) => setSelectedFieldId(e.target.value)}
+              className="w-full rounded-md border border-primary/20 bg-[#060913] px-3 py-2 text-sm"
+            >
+              <option value="">Select a field</option>
+              {fieldBreakdown.map((field) => (
+                <option key={field.fieldId} value={field.fieldId}>
+                  {field.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="mb-6 p-3 rounded-md border border-primary/10 bg-[#060913]/40">
+            {loadingValues ? (
+              <p className="text-sm text-foreground/60">Loading field values...</p>
+            ) : selectedFieldId ? (
+              <p className="text-sm text-foreground/60">
+                Raw values fetched via `submissionValue.getByFieldId`: {selectedFieldValues.length}
+              </p>
+            ) : (
+              <p className="text-sm text-foreground/60">Select a field to inspect raw value rows.</p>
+            )}
+          </div>
           <div className="space-y-4">
             {fieldBreakdown.map((field) => (
               <div key={field.fieldId} className="rounded-lg border border-primary/10 p-4">
@@ -211,7 +309,7 @@ export default function FormResponsesPage() {
         </div>
 
         <div className="bg-card/30 border border-primary/10 rounded-xl p-6">
-          <h2 className="text-lg font-semibold mb-4">Recent submissions</h2>
+          <h2 className="text-lg font-semibold mb-4">Submissions</h2>
           <div className="space-y-3">
             {submissions.map((submission) => (
               <div key={submission.id} className="rounded-lg border border-primary/10 p-3">
@@ -223,6 +321,25 @@ export default function FormResponsesPage() {
                   <span className="text-foreground/60">Email:</span>{" "}
                   {submission.respondentEmail || "Not provided"}
                 </p>
+                <div className="mt-3 flex gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => router.push(`/dashboard/submissions/${submission.id}`)}
+                  >
+                    Open details
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="text-red-400 border-red-400/20"
+                    disabled={deletingSubmissionId === submission.id}
+                    onClick={() => handleDeleteSubmission(submission.id)}
+                  >
+                    <Trash2 className="w-4 h-4 mr-1" />
+                    Delete
+                  </Button>
+                </div>
               </div>
             ))}
             {submissions.length === 0 ? (

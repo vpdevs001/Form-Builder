@@ -2,7 +2,7 @@
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { GripVertical, Loader2, Plus, Trash2 } from "lucide-react";
+import { GripVertical, Loader2, Pencil, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { FormWorkspaceNav } from "~/components/forms/form-workspace-nav";
 import { Badge } from "~/components/ui/badge";
@@ -54,6 +54,13 @@ export default function FormBuilderPage() {
   const [options, setOptions] = useState("");
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [editingFieldId, setEditingFieldId] = useState<string | null>(null);
+  const [editLabel, setEditLabel] = useState("");
+  const [editHelpText, setEditHelpText] = useState("");
+  const [editPlaceholder, setEditPlaceholder] = useState("");
+  const [editRequired, setEditRequired] = useState(false);
+  const [editFieldType, setEditFieldType] = useState<FieldType>("SHORT_TEXT");
+  const [editOptions, setEditOptions] = useState("");
 
   const loadData = async () => {
     try {
@@ -148,6 +155,48 @@ export default function FormBuilderPage() {
       toast.error(error.message || "Failed to delete question");
     } finally {
       setDeletingId(null);
+    }
+  };
+
+  const beginEditField = (field: Awaited<ReturnType<typeof api.formField.getByFormId.query>>[number]) => {
+    setEditingFieldId(field.id);
+    setEditLabel(field.label);
+    setEditHelpText(field.helpText || "");
+    setEditPlaceholder(field.placeholder || "");
+    setEditRequired(field.isRequired);
+    setEditFieldType(field.fieldType as FieldType);
+    setEditOptions(field.options.map((option) => option.label).join(", "));
+  };
+
+  const saveEditedField = async () => {
+    if (!editingFieldId) return;
+    const optionCapable = ["SINGLE_SELECT", "MULTI_SELECT", "CHECKBOX", "DROPDOWN"].includes(editFieldType);
+    const optionList = optionCapable
+      ? editOptions
+          .split(",")
+          .map((option) => option.trim())
+          .filter(Boolean)
+          .map((option, index) => ({
+            label: option,
+            value: option.toLowerCase().replace(/\s+/g, "-"),
+            optionOrder: index,
+          }))
+      : undefined;
+    try {
+      await api.formField.update.mutate({
+        id: editingFieldId,
+        label: editLabel,
+        helpText: editHelpText || undefined,
+        placeholder: editPlaceholder || undefined,
+        isRequired: editRequired,
+        fieldType: editFieldType,
+        options: optionList,
+      });
+      toast.success("Question updated");
+      setEditingFieldId(null);
+      await loadData();
+    } catch (error: any) {
+      toast.error(error.message || "Failed to update question");
     }
   };
 
@@ -318,17 +367,77 @@ export default function FormBuilderPage() {
                         ) : null}
                       </div>
                     </div>
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="outline"
-                      className="text-red-400 border-red-400/20"
-                      disabled={deletingId === field.id}
-                      onClick={() => handleDeleteField(field.id)}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() => beginEditField(field)}
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        className="text-red-400 border-red-400/20"
+                        disabled={deletingId === field.id}
+                        onClick={() => handleDeleteField(field.id)}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </div>
+                  {editingFieldId === field.id ? (
+                    <div className="mt-4 space-y-3 border-t border-primary/10 pt-4">
+                      <Input value={editLabel} onChange={(e) => setEditLabel(e.target.value)} />
+                      <Input
+                        placeholder="Placeholder"
+                        value={editPlaceholder}
+                        onChange={(e) => setEditPlaceholder(e.target.value)}
+                      />
+                      <Textarea
+                        placeholder="Help text"
+                        value={editHelpText}
+                        onChange={(e) => setEditHelpText(e.target.value)}
+                        rows={2}
+                      />
+                      <select
+                        value={editFieldType}
+                        onChange={(e) => setEditFieldType(e.target.value as FieldType)}
+                        className="w-full rounded-md border border-primary/20 bg-[#060913] px-3 py-2 text-sm"
+                      >
+                        {Object.entries(FIELD_TYPE_LABELS).map(([value, text]) => (
+                          <option key={value} value={value}>
+                            {text}
+                          </option>
+                        ))}
+                      </select>
+                      {["SINGLE_SELECT", "MULTI_SELECT", "CHECKBOX", "DROPDOWN"].includes(editFieldType) ? (
+                        <Input
+                          value={editOptions}
+                          onChange={(e) => setEditOptions(e.target.value)}
+                          placeholder="Options (comma separated)"
+                        />
+                      ) : null}
+                      <label className="flex items-center gap-2 text-sm">
+                        <input
+                          type="checkbox"
+                          checked={editRequired}
+                          onChange={(e) => setEditRequired(e.target.checked)}
+                        />
+                        Required
+                      </label>
+                      <div className="flex gap-2">
+                        <Button size="sm" className="bg-primary" onClick={saveEditedField}>
+                          Save
+                        </Button>
+                        <Button size="sm" variant="outline" onClick={() => setEditingFieldId(null)}>
+                          Cancel
+                        </Button>
+                      </div>
+                    </div>
+                  ) : null}
                 </div>
               ))}
               {fields.length === 0 ? (

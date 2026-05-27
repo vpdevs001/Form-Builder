@@ -107,6 +107,13 @@ export default function DashboardPage() {
             >
               Public Forms
             </Button>
+            <Button
+              onClick={() => router.push("/dashboard/submissions")}
+              variant="outline"
+              className="w-full sm:w-auto border-foreground/10 text-foreground/80 font-bold gap-1.5 py-5 px-4 rounded-xl transition-all"
+            >
+              My Submissions
+            </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
