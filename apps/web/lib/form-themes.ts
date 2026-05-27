@@ -4,6 +4,10 @@ export interface FormThemeStyle {
   id: FormThemeName;
   label: string;
   japanese: string;
+  /** Character art shown on fill / thank-you pages */
+  characterImage: string;
+  /** Decorative accent (not hero_visual) */
+  decorImage: string;
   bg: string;
   glow: string;
   border: string;
@@ -19,6 +23,8 @@ export const FORM_THEMES: Record<FormThemeName, FormThemeStyle> = {
     id: "Naruto",
     label: "Naruto",
     japanese: "木ノ葉",
+    characterImage: "/images/naruto_character.png",
+    decorImage: "/images/naruto_rasengan.png",
     bg: "bg-[#060913]",
     glow: "from-[#ff6b00]/20 via-transparent to-[#ff6b00]/5",
     border: "border-[#ff6b00]/30",
@@ -32,6 +38,8 @@ export const FORM_THEMES: Record<FormThemeName, FormThemeStyle> = {
     id: "Death Note",
     label: "Death Note",
     japanese: "死神",
+    characterImage: "/images/deathnote_character.png",
+    decorImage: "/images/deathnote_apple.png",
     bg: "bg-black",
     glow: "from-[#990000]/25 via-transparent to-[#990000]/10",
     border: "border-[#990000]/35",
@@ -45,6 +53,8 @@ export const FORM_THEMES: Record<FormThemeName, FormThemeStyle> = {
     id: "Attack On Titan",
     label: "Attack on Titan",
     japanese: "調査兵団",
+    characterImage: "/images/aot_character.png",
+    decorImage: "/images/aot_wings.png",
     bg: "bg-[#0a0f0a]",
     glow: "from-[#2e7d32]/20 via-transparent to-[#8d6e63]/10",
     border: "border-[#2e7d32]/35",

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { FORM_THEME_OPTIONS, type FormThemeName } from "~/lib/form-themes";
 import { cn } from "~/lib/utils";
 
@@ -23,8 +24,16 @@ export function ThemePicker({ value, onChange }: ThemePickerProps) {
               selected ? `${theme.border} ring-2 ring-offset-2 ring-offset-[#060913]` : "border-white/10 hover:border-white/20",
             )}
           >
+            <div className="relative h-16 w-full mb-3 rounded-lg overflow-hidden bg-black/30">
+              <Image
+                src={theme.characterImage}
+                alt={theme.label}
+                fill
+                className="object-contain object-bottom p-1"
+              />
+            </div>
             <div
-              className="h-2 w-full rounded-full mb-3"
+              className="h-1 w-full rounded-full mb-2"
               style={{ backgroundColor: theme.accent }}
             />
             <p className="font-bold text-white">{theme.label}</p>

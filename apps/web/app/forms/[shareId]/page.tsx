@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "~/components/ui/button";
@@ -173,6 +174,12 @@ export default function FillFormPage() {
   return (
     <div className={cn("min-h-screen text-foreground relative overflow-hidden", theme.bg)}>
       <div className={cn("absolute inset-0 bg-gradient-to-br pointer-events-none", theme.glow)} />
+      <div className="absolute top-8 right-4 w-28 h-28 opacity-20 pointer-events-none hidden sm:block">
+        <Image src={theme.decorImage} alt="" fill className="object-contain" aria-hidden />
+      </div>
+      <div className="absolute bottom-8 left-4 w-36 h-36 opacity-15 pointer-events-none hidden md:block">
+        <Image src={theme.decorImage} alt="" fill className="object-contain" aria-hidden />
+      </div>
 
       <div className="relative z-10 min-h-screen flex flex-col">
         <div className="px-4 pt-6">
@@ -190,7 +197,17 @@ export default function FillFormPage() {
         </div>
 
         <div className="flex-1 flex items-center justify-center px-4 py-10">
-          <div className={cn("max-w-2xl w-full rounded-2xl border backdrop-blur-md p-8 shadow-2xl", theme.card)}>
+          <div className={cn("max-w-2xl w-full rounded-2xl border backdrop-blur-md p-8 shadow-2xl relative", theme.card)}>
+            <div className="absolute -top-16 right-0 w-32 h-32 opacity-90 pointer-events-none hidden sm:block">
+              <Image
+                src={theme.characterImage}
+                alt=""
+                fill
+                className="object-contain drop-shadow-lg"
+                aria-hidden
+              />
+            </div>
+
             {currentIndex === 0 && form.description ? (
               <p className="text-sm text-foreground/60 mb-4">{form.description}</p>
             ) : null}
