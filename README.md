@@ -1,3 +1,36 @@
+# FormCraft
+
+Anime-themed **Form Builder** with a Typeform-style **one-question-at-a-time** respondent experience. Creators manage forms from `/dashboard`, while respondents can fill published forms without logging in.
+
+## Deployed (add your links after deploying)
+- App: `<YOUR_DEPLOYED_URL>`
+- API docs (Scalar): `<YOUR_DEPLOYED_URL>/docs`
+
+## Demo credentials
+- Email: `demo@formcraft.dev`
+- Password: `demo1234`
+
+## Tech stack
+Turborepo, Next.js, React, tRPC, Zod, Drizzle ORM, Drizzle Kit, PostgreSQL, Express, Scalar/OpenAPI, JWT (httpOnly cookies)
+
+## Local setup
+1. Install: `pnpm install`
+2. Configure environment: edit the root `.env` (loaded by `dotenv -- turbo ...`) with `DATABASE_URL`, `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`, `BASE_URL`, `PORT`, `NEXT_PUBLIC_API_URL` (and optional `EMAIL_*`).
+3. DB migrations: `pnpm db:generate && pnpm db:migrate`
+4. Start dev: `pnpm run dev`
+
+Open:
+- Web: `http://localhost:3000`
+- API: `http://localhost:8000`
+- API docs (Scalar): `http://localhost:8000/docs`
+
+## Main routes
+- Explore public forms: `/public-forms`
+- Fill a published form: `/forms/:shareId`
+- Creator dashboard: `/dashboard` (login required)
+
+<details><summary>Original Turborepo template (hidden)</summary>
+
 # Turborepo starter
 
 This Turborepo starter is maintained by the Turborepo core team.
@@ -133,3 +166,4 @@ Learn more about the power of Turborepo:
 - [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
 - [Configuration Options](https://turborepo.com/docs/reference/configuration)
 - [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+</details>
