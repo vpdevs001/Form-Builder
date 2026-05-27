@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "~/components/ui/button";
@@ -22,10 +23,23 @@ export function CTASection() {
         </svg>
       </div>
 
+      {/* Floating anime decorations — section level */}
+      <div className="absolute top-[15%] left-[5%] w-20 h-20 opacity-[0.07] pointer-events-none select-none hidden lg:block animate-float-medium">
+        <Image src="/images/deathnote_apple.png" alt="" fill className="object-contain" aria-hidden="true" />
+      </div>
+      <div className="absolute bottom-[15%] right-[5%] w-16 h-16 opacity-[0.10] pointer-events-none select-none hidden lg:block animate-float-slow">
+        <Image src="/images/naruto_rasengan.png" alt="" fill className="object-contain" aria-hidden="true" />
+      </div>
+
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl relative z-10">
         <div className="relative rounded-3xl p-8 sm:p-12 md:p-16 overflow-hidden bg-gradient-to-br from-[#1a1005] via-[#0d0702] to-[#060913] border border-primary/20 shadow-[0_0_40px_rgba(255,107,0,0.15)] text-center scroll-animate">
           {/* Subtle Orange/Crimson Chakra Glow in center */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full bg-primary/8 blur-[100px] pointer-events-none" />
+
+          {/* Wings of Freedom watermark emblem in background */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 opacity-[0.04] pointer-events-none select-none">
+            <Image src="/images/aot_wings.png" alt="" fill className="object-contain" aria-hidden="true" />
+          </div>
 
           {/* Sparkle badge */}
           <div className="mb-6 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-xs font-semibold text-primary uppercase tracking-wider">

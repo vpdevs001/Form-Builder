@@ -153,9 +153,9 @@ export const ANIME_THEMES: AnimeTheme[] = [
 ];
 
 export const SOCIAL_LINKS = {
-  github: "https://github.com",
-  twitter: "https://x.com",
-  youtube: "https://youtube.com",
-  instagram: "https://instagram.com",
-  linkedin: "https://linkedin.com"
+  github: "https://github.com/vpdevs001",
+  twitter: "https://x.com/Ved_PandeyOG",
+  youtube: "https://www.youtube.com/@DevWithVed",
+  instagram: "https://www.instagram.com/vedpandey_dev",
+  linkedin: "https://www.linkedin.com/in/ved-pandey"
 };

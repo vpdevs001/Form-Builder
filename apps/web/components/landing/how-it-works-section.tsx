@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { PlusCircle, Palette, Share2, ArrowRight } from "lucide-react";
 
 export function HowItWorksSection() {
@@ -14,6 +15,8 @@ export function HowItWorksSection() {
       accentColor: "border-[#ff6b00]/30 hover:border-[#ff6b00]/70",
       glowBg: "bg-[#ff6b00]/5",
       badgeColor: "bg-[#ff6b00] text-white shadow-[0_0_10px_rgba(255,107,0,0.4)]",
+      characterImage: "/images/naruto_character.png",
+      characterAlt: "Naruto in Nine-Tails Chakra Mode",
     },
     {
       number: "02",
@@ -24,6 +27,8 @@ export function HowItWorksSection() {
       accentColor: "border-[#990000]/30 hover:border-[#990000]/70",
       glowBg: "bg-[#990000]/5",
       badgeColor: "bg-[#990000] text-white shadow-[0_0_10px_rgba(153,0,0,0.4)]",
+      characterImage: "/images/deathnote_character.png",
+      characterAlt: "Ryuk the Shinigami",
     },
     {
       number: "03",
@@ -34,6 +39,8 @@ export function HowItWorksSection() {
       accentColor: "border-[#2e7d32]/30 hover:border-[#2e7d32]/70",
       glowBg: "bg-[#2e7d32]/5",
       badgeColor: "bg-[#2e7d32] text-white shadow-[0_0_10px_rgba(46,125,50,0.4)]",
+      characterImage: "/images/aot_character.png",
+      characterAlt: "Attack on Titan warrior",
     },
   ];
 
@@ -41,6 +48,26 @@ export function HowItWorksSection() {
     <section id="how-it-works" className="py-24 relative overflow-hidden border-t border-primary/5">
       {/* Decorative gradients */}
       <div className="absolute top-[40%] right-[-10%] w-[300px] h-[300px] rounded-full bg-primary/2 blur-[100px] pointer-events-none" />
+
+      {/* Decorative anime background images */}
+      <div className="absolute top-[10%] left-[-3%] w-40 h-40 opacity-[0.06] pointer-events-none select-none hidden lg:block">
+        <Image
+          src="/images/aot_wings.png"
+          alt=""
+          fill
+          className="object-contain"
+          aria-hidden="true"
+        />
+      </div>
+      <div className="absolute bottom-[10%] right-[-2%] w-28 h-28 opacity-[0.08] pointer-events-none select-none hidden lg:block animate-float-slow">
+        <Image
+          src="/images/naruto_rasengan.png"
+          alt=""
+          fill
+          className="object-contain"
+          aria-hidden="true"
+        />
+      </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl relative z-10">
         {/* Section Header */}
@@ -67,27 +94,38 @@ export function HowItWorksSection() {
               return (
                 <div
                   key={idx}
-                  className={`relative flex flex-col items-center text-center p-8 rounded-2xl bg-card/60 backdrop-blur-xs border transition-all duration-300 group scroll-animate ${step.accentColor} ${step.glowBg}`}
+                  className={`relative flex flex-col items-center text-center p-8 rounded-2xl bg-card/60 backdrop-blur-xs border transition-all duration-300 group scroll-animate overflow-hidden ${step.accentColor} ${step.glowBg}`}
                 >
+                  {/* Character watermark background */}
+                  <div className="absolute bottom-0 right-0 w-32 h-40 opacity-[0.06] group-hover:opacity-[0.12] transition-opacity duration-700 pointer-events-none select-none z-0">
+                    <Image
+                      src={step.characterImage}
+                      alt={step.characterAlt}
+                      fill
+                      className="object-contain object-bottom-right"
+                      aria-hidden="true"
+                    />
+                  </div>
+
                   {/* Circle Step Number Badge */}
                   <div className={`w-14 h-14 rounded-full flex items-center justify-center font-extrabold text-lg mb-6 z-10 transition-transform duration-300 group-hover:scale-105 ${step.badgeColor}`}>
                     {step.number}
                   </div>
 
                   {/* Icon */}
-                  <div className="p-4 rounded-xl bg-black/40 border border-white/5 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <div className="p-4 rounded-xl bg-black/40 border border-white/5 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 relative z-10">
                     {step.icon}
                   </div>
 
-                  <span className="text-[10px] font-mono text-primary/80 block tracking-widest uppercase font-bold mb-2">
+                  <span className="text-[10px] font-mono text-primary/80 block tracking-widest uppercase font-bold mb-2 relative z-10">
                     {step.subtitle}
                   </span>
 
-                  <h3 className="text-xl font-extrabold text-white mb-4 tracking-tight">
+                  <h3 className="text-xl font-extrabold text-white mb-4 tracking-tight relative z-10">
                     {step.title}
                   </h3>
 
-                  <p className="text-xs sm:text-sm text-foreground/70 leading-relaxed font-medium">
+                  <p className="text-xs sm:text-sm text-foreground/70 leading-relaxed font-medium relative z-10">
                     {featureHighlights(idx, step.description)}
                   </p>
                 </div>

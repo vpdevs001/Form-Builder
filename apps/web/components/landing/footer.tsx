@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Github, Youtube, Instagram, Linkedin, Sparkles } from "lucide-react";
 import { SOCIAL_LINKS } from "~/lib/constants";
@@ -17,6 +18,14 @@ export function Footer() {
 
   return (
     <footer className="bg-[#04060d] border-t border-primary/10 pt-16 pb-12 relative overflow-hidden font-sans">
+      {/* Subtle anime watermarks */}
+      <div className="absolute top-[20%] right-[5%] w-32 h-32 opacity-[0.03] pointer-events-none select-none hidden lg:block">
+        <Image src="/images/aot_wings.png" alt="" fill className="object-contain" aria-hidden="true" />
+      </div>
+      <div className="absolute bottom-[30%] left-[4%] w-16 h-16 opacity-[0.04] pointer-events-none select-none hidden lg:block">
+        <Image src="/images/naruto_rasengan.png" alt="" fill className="object-contain" aria-hidden="true" />
+      </div>
+
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-8 mb-12">
           {/* Brand Column */}
@@ -143,7 +152,7 @@ export function Footer() {
             &copy; {currentYear} FormCraft. All rights reserved.
           </div>
           <div className="flex items-center gap-2">
-            <span>Built by VPDevs for the Shinobi Cohort</span>
+            <span>Built by Ved Pandey for the Web Dev Cohort</span>
             <span className="w-1.5 h-1.5 rounded-full bg-primary" />
           </div>
         </div>

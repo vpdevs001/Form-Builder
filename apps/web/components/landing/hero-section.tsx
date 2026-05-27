@@ -24,30 +24,54 @@ export function HeroSection() {
         <div className="absolute top-[40%] right-[30%] w-[500px] h-[500px] rounded-full bg-accent/5 blur-[150px]" />
       </div>
 
-      {/* Floating Anime SVG Elements */}
+      {/* Floating Anime Image Elements */}
       <div className="absolute inset-0 z-0 pointer-events-none select-none">
-        {/* Floating Naruto Shuriken / Star */}
-        <div className="absolute top-[25%] left-[8%] animate-float-slow hidden lg:block opacity-65">
-          <svg className="w-16 h-16 text-primary fill-current filter drop-shadow-[0_0_15px_rgba(255,107,0,0.5)]" viewBox="0 0 100 100">
-            <path d="M50 0 L55 35 L90 35 L60 55 L75 90 L50 70 L25 90 L40 55 L10 35 L45 35 Z" />
-            <circle cx="50" cy="50" r="10" className="text-[#060913] fill-current" />
-          </svg>
+        {/* Floating Naruto Rasengan */}
+        <div className="absolute top-[22%] left-[6%] animate-float-slow hidden lg:block opacity-60">
+          <div className="relative w-24 h-24 filter drop-shadow-[0_0_25px_rgba(255,107,0,0.5)]">
+            <Image
+              src="/images/naruto_rasengan.png"
+              alt="Naruto Rasengan energy sphere"
+              fill
+              className="object-contain"
+            />
+          </div>
         </div>
 
         {/* Floating Death Note Apple */}
-        <div className="absolute bottom-[30%] left-[10%] animate-float-medium hidden lg:block opacity-65">
-          <svg className="w-14 h-14 text-secondary fill-current filter drop-shadow-[0_0_15px_rgba(153,0,0,0.6)]" viewBox="0 0 100 100">
-            <path d="M50 15 C35 15, 20 25, 20 45 C20 70, 35 90, 50 90 C65 90, 80 70, 80 45 C80 25, 65 15, 50 15 M50 15 C52 8, 60 5, 65 8" strokeWidth="3" stroke="currentColor" />
-          </svg>
+        <div className="absolute bottom-[28%] left-[8%] animate-float-medium hidden lg:block opacity-55">
+          <div className="relative w-16 h-16 filter drop-shadow-[0_0_20px_rgba(153,0,0,0.6)]">
+            <Image
+              src="/images/deathnote_apple.png"
+              alt="Death Note Ryuk's apple"
+              fill
+              className="object-contain"
+            />
+          </div>
         </div>
 
-        {/* Floating AoT Wings of Freedom */}
-        <div className="absolute top-[20%] right-[8%] animate-float-fast hidden lg:block opacity-65">
-          <svg className="w-20 h-20 text-accent fill-current filter drop-shadow-[0_0_15px_rgba(46,125,50,0.5)]" viewBox="0 0 100 100">
-            {/* Minimal Wings Vector */}
-            <path d="M20 30 C30 25, 45 35, 45 50 C45 60, 35 75, 20 80 C25 70, 30 50, 20 30 Z" />
-            <path d="M80 30 C70 25, 55 35, 55 50 C55 60, 65 75, 80 80 C75 70, 70 50, 80 30 Z" className="opacity-80 text-white" />
-          </svg>
+        {/* Floating AoT Wings of Freedom Emblem */}
+        <div className="absolute top-[18%] right-[6%] animate-float-fast hidden lg:block opacity-45">
+          <div className="relative w-28 h-28 filter drop-shadow-[0_0_20px_rgba(46,125,50,0.4)]">
+            <Image
+              src="/images/aot_wings.png"
+              alt="Attack on Titan Wings of Freedom emblem"
+              fill
+              className="object-contain"
+            />
+          </div>
+        </div>
+
+        {/* Additional floating Rasengan — bottom right for balance */}
+        <div className="absolute bottom-[22%] right-[10%] animate-float-slow hidden lg:block opacity-30">
+          <div className="relative w-14 h-14 filter drop-shadow-[0_0_15px_rgba(255,107,0,0.3)]">
+            <Image
+              src="/images/naruto_rasengan.png"
+              alt="Rasengan glow"
+              fill
+              className="object-contain"
+            />
+          </div>
         </div>
       </div>
 

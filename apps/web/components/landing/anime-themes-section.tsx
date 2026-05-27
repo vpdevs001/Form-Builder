@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { Sparkles, Eye, Swords, ShieldAlert } from "lucide-react";
 import { ANIME_THEMES } from "~/lib/constants";
 import { Button } from "~/components/ui/button";
@@ -24,6 +25,17 @@ export function AnimeThemesSection() {
       {/* Decorative side beams */}
       <div className="absolute top-[20%] left-0 w-80 h-80 rounded-full bg-accent/4 blur-[100px] pointer-events-none" />
       <div className="absolute bottom-[20%] right-0 w-80 h-80 rounded-full bg-[#ff6b00]/3 blur-[100px] pointer-events-none" />
+
+      {/* Floating anime accent images */}
+      <div className="absolute top-[8%] right-[4%] w-20 h-20 opacity-[0.07] pointer-events-none select-none hidden lg:block animate-float-slow">
+        <Image src="/images/naruto_rasengan.png" alt="" fill className="object-contain" aria-hidden="true" />
+      </div>
+      <div className="absolute bottom-[10%] left-[3%] w-16 h-16 opacity-[0.06] pointer-events-none select-none hidden lg:block animate-float-medium">
+        <Image src="/images/deathnote_apple.png" alt="" fill className="object-contain" aria-hidden="true" />
+      </div>
+      <div className="absolute top-[50%] left-[6%] w-24 h-24 opacity-[0.04] pointer-events-none select-none hidden xl:block animate-float-fast">
+        <Image src="/images/aot_wings.png" alt="" fill className="object-contain" aria-hidden="true" />
+      </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl relative z-10">
         {/* Section Header */}
@@ -54,6 +66,17 @@ export function AnimeThemesSection() {
                   className="absolute inset-0 bg-cover bg-center mix-blend-overlay opacity-15 group-hover:scale-105 transition-transform duration-700 pointer-events-none z-0"
                   style={{ backgroundImage: `url(${theme.bgImage})` }}
                 />
+
+                {/* Character image watermark accent */}
+                <div className="absolute bottom-0 right-0 w-36 h-44 opacity-[0.07] group-hover:opacity-[0.14] transition-opacity duration-700 pointer-events-none select-none z-0">
+                  <Image
+                    src={theme.id === "naruto" ? "/images/naruto_character.png" : theme.id === "deathnote" ? "/images/deathnote_character.png" : "/images/aot_character.png"}
+                    alt=""
+                    fill
+                    className="object-contain object-bottom"
+                    aria-hidden="true"
+                  />
+                </div>
 
                 {/* Huge Watermark Japanese Text */}
                 <div className="absolute top-4 right-4 text-7xl font-extrabold select-none opacity-4 font-heading text-white pointer-events-none z-0">
