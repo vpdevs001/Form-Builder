@@ -14,6 +14,17 @@ export function handleTRPCError(error: unknown, contextMessage?: string): never 
     // swallow logger errors
   }
 
+  // In non-production include the original error message to aid local debugging
+  if (process.env.NODE_ENV !== "production") {
+    const original = error instanceof Error ? error.message : String(error);
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: `${msg}: ${original}`,
+      // include original for downstream tools if needed
+      cause: error as Error,
+    });
+  }
+
   throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: msg });
 }
 

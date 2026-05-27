@@ -155,6 +155,10 @@ export const authRouter = router({
     .output(userPublicSchema)
     .mutation(async ({ input }) => {
       try {
+        if (!input.firstName && !input.lastName && !input.email) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "At least one detail must be changed" });
+        }
+
         return await userService.changeUserDetails(input);
       } catch (error) {
         handleTRPCError(error, "Failed to change user details");

@@ -56,7 +56,4 @@ export const changeUserDetailsInputSchema = z
     lastName: z.string().min(1).max(100).optional().describe("new last name (optional)"),
     email: z.email().min(5).max(254).optional().describe("new email address (optional)"),
   })
-  .refine((data) => data.firstName || data.lastName || data.email, {
-    message: "At least one detail must be changed",
-  })
   .describe("payload to change user details (at least one field required)");

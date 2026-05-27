@@ -13,6 +13,24 @@ export const createTRPCHttpBatchClientClient = (opts?: CreateTRPCHttpBatchClient
       return fetch(url, {
         ...options,
         credentials: "include",
+      }).then(async (res) => {
+        if (!res.ok) {
+          let body: unknown = "<unreadable>";
+          try {
+            const text = await res.clone().text();
+            try {
+              body = JSON.parse(text);
+            } catch {
+              body = text;
+            }
+          } catch (err) {
+            // ignore
+          }
+          // Log useful diagnostics to the browser console for investigation
+          // eslint-disable-next-line no-console
+          console.error("trpc fetch non-OK response", { url, status: res.status, body });
+        }
+        return res;
       });
     },
   });

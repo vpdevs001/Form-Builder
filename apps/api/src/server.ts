@@ -55,16 +55,16 @@ if (env.NODE_ENV !== "prod") {
 
 app.use(express.json());
 
-app.get("/", (req, res) => {
+app.get("/", (_, res) => {
   return res.json({ message: "Streamyst is up and running..." });
 });
 
-app.get("/health", (req, res) => {
+app.get("/health", (_, res) => {
   return res.json({ message: "Streamyst server is healthy", healthy: true });
 });
 
 logger.debug(`openapi.json: ${env.BASE_URL}/openapi.json`);
-app.get("/openapi.json", (req, res) => {
+app.get("/openapi.json", (_, res) => {
   if (!openApiDocument) {
     return res.status(503).json({ error: "OpenAPI document unavailable" });
   }
@@ -76,13 +76,18 @@ if (openApiDocument) {
   app.use("/docs", apiReference({ url: "/openapi.json" }));
 }
 
-app.use(
-  "/api",
-  createOpenApiExpressMiddleware({
-    router: serverRouter,
-    createContext,
-  }),
-);
+// Try to use OpenAPI middleware, but skip if it fails
+try {
+  app.use(
+    "/api",
+    createOpenApiExpressMiddleware({
+      router: serverRouter,
+      createContext,
+    }),
+  );
+} catch (err) {
+  logger.warn("Failed to create OpenAPI Express middleware, /api endpoint disabled", err);
+}
 
 app.use(
   "/trpc",

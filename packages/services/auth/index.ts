@@ -1,4 +1,5 @@
 import { hash, compare } from "bcryptjs";
+import { TRPCError } from "@trpc/server";
 import { db } from "@repo/database";
 import { eq } from "drizzle-orm";
 import { refreshTokens, users, type User } from "@repo/database/schema";
@@ -25,7 +26,7 @@ class UserService {
     const existingUser = await db.select().from(users).where(eq(users.email, email));
 
     if (existingUser.length > 0) {
-      throw new Error("Email is already registered");
+      throw new TRPCError({ code: "CONFLICT", message: "Email is already registered" });
     }
 
     const passwordHash = await hash(password, 10);
@@ -40,7 +41,7 @@ class UserService {
       .returning();
 
     if (!createdUser) {
-      throw new Error("Failed to create user");
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to create user" });
     }
 
     return toPublicUser(createdUser);

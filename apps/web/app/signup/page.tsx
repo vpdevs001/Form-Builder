@@ -7,7 +7,17 @@ import { useAuth } from "~/providers/auth-provider";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import { Sparkles, ShieldAlert, Swords, Mail, Lock, User, Eye, EyeOff, Loader2 } from "lucide-react";
+import {
+  Sparkles,
+  ShieldAlert,
+  Swords,
+  Mail,
+  Lock,
+  User,
+  Eye,
+  EyeOff,
+  Loader2,
+} from "lucide-react";
 import { toast } from "sonner";
 
 type ThemeId = "naruto" | "deathnote" | "aot";
@@ -35,7 +45,8 @@ const THEMES: Record<ThemeId, ThemeConfig> = {
     glowClass: "shadow-[0_0_30px_rgba(255,107,0,0.2)] border-[#ff6b00]/30",
     bgGradient: "from-[#ff6b00]/10 via-black to-[#ff6b00]/5",
     borderClass: "border-[#ff6b00]/20 focus-within:border-[#ff6b00]",
-    buttonClass: "bg-[#ff6b00] hover:bg-[#ff6b00]/90 text-white shadow-[0_0_15px_rgba(255,107,0,0.3)] hover:shadow-[0_0_25px_rgba(255,107,0,0.5)]",
+    buttonClass:
+      "bg-[#ff6b00] hover:bg-[#ff6b00]/90 text-white shadow-[0_0_15px_rgba(255,107,0,0.3)] hover:shadow-[0_0_25px_rgba(255,107,0,0.5)]",
     inputFocusClass: "focus-visible:ring-[#ff6b00] focus-visible:border-[#ff6b00]",
     textMutedClass: "text-[#a09786]",
     accentTextClass: "text-[#ff6b00]",
@@ -48,7 +59,8 @@ const THEMES: Record<ThemeId, ThemeConfig> = {
     glowClass: "shadow-[0_0_30px_rgba(153,0,0,0.2)] border-[#990000]/30",
     bgGradient: "from-[#990000]/10 via-black to-[#990000]/5",
     borderClass: "border-[#990000]/20 focus-within:border-[#990000]",
-    buttonClass: "bg-[#990000] hover:bg-[#990000]/90 text-white shadow-[0_0_15px_rgba(153,0,0,0.3)] hover:shadow-[0_0_25px_rgba(153,0,0,0.5)] font-mono",
+    buttonClass:
+      "bg-[#990000] hover:bg-[#990000]/90 text-white shadow-[0_0_15px_rgba(153,0,0,0.3)] hover:shadow-[0_0_25px_rgba(153,0,0,0.5)] font-mono",
     inputFocusClass: "focus-visible:ring-[#990000] focus-visible:border-[#990000] font-mono",
     textMutedClass: "text-zinc-500 font-mono",
     accentTextClass: "text-[#990000] font-mono",
@@ -61,7 +73,8 @@ const THEMES: Record<ThemeId, ThemeConfig> = {
     glowClass: "shadow-[0_0_30px_rgba(46,125,50,0.2)] border-[#2e7d32]/30",
     bgGradient: "from-[#2e7d32]/10 via-black to-[#2e7d32]/5",
     borderClass: "border-[#2e7d32]/20 focus-within:border-[#2e7d32]",
-    buttonClass: "bg-[#2e7d32] hover:bg-[#2e7d32]/90 text-white shadow-[0_0_15px_rgba(46,125,50,0.3)] hover:shadow-[0_0_25px_rgba(46,125,50,0.5)]",
+    buttonClass:
+      "bg-[#2e7d32] hover:bg-[#2e7d32]/90 text-white shadow-[0_0_15px_rgba(46,125,50,0.3)] hover:shadow-[0_0_25px_rgba(46,125,50,0.5)]",
     inputFocusClass: "focus-visible:ring-[#2e7d32] focus-visible:border-[#2e7d32]",
     textMutedClass: "text-emerald-950/40 text-slate-400",
     accentTextClass: "text-[#2e7d32]",
@@ -123,12 +136,24 @@ export default function SignupPage() {
     <div className="min-h-screen relative flex items-center justify-center px-4 py-12 overflow-hidden bg-[#060913]">
       {/* Background gradients */}
       <div className="absolute inset-0 z-0 pointer-events-none opacity-40">
-        <div className={`absolute top-[25%] left-[25%] w-[400px] h-[400px] rounded-full blur-[100px] transition-all duration-1000 ${
-          activeTheme === "naruto" ? "bg-primary/10" : activeTheme === "deathnote" ? "bg-secondary/15" : "bg-accent/10"
-        }`} />
-        <div className={`absolute bottom-[25%] right-[25%] w-[400px] h-[400px] rounded-full blur-[100px] transition-all duration-1000 ${
-          activeTheme === "naruto" ? "bg-primary/5" : activeTheme === "deathnote" ? "bg-secondary/10" : "bg-accent/5"
-        }`} />
+        <div
+          className={`absolute top-[25%] left-[25%] w-100 h-100 rounded-full blur-[100px] transition-all duration-1000 ${
+            activeTheme === "naruto"
+              ? "bg-primary/10"
+              : activeTheme === "deathnote"
+                ? "bg-secondary/15"
+                : "bg-accent/10"
+          }`}
+        />
+        <div
+          className={`absolute bottom-[25%] right-[25%] w-100 h-100 rounded-full blur-[100px] transition-all duration-1000 ${
+            activeTheme === "naruto"
+              ? "bg-primary/5"
+              : activeTheme === "deathnote"
+                ? "bg-secondary/10"
+                : "bg-accent/5"
+          }`}
+        />
       </div>
 
       {/* Floating Theme Particles */}
@@ -151,7 +176,10 @@ export default function SignupPage() {
           <div className="absolute top-[15%] right-[10%] animate-float-fast opacity-30">
             <svg className="w-14 h-14 text-accent fill-current" viewBox="0 0 100 100">
               <path d="M20 30 C30 25, 45 35, 45 50 C45 60, 35 75, 20 80 C25 70, 30 50, 20 30 Z" />
-              <path d="M80 30 C70 25, 55 35, 55 50 C55 60, 65 75, 80 80 C75 70, 70 50, 80 30 Z" className="opacity-80 text-white" />
+              <path
+                d="M80 30 C70 25, 55 35, 55 50 C55 60, 65 75, 80 80 C75 70, 70 50, 80 30 Z"
+                className="opacity-80 text-white"
+              />
             </svg>
           </div>
         )}
@@ -161,25 +189,34 @@ export default function SignupPage() {
         {/* Logo */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2 group">
-            <div className="relative w-8 h-8 rounded-lg bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-white shadow-lg transition-transform duration-300 group-hover:scale-105">
+            <div className="relative w-8 h-8 rounded-lg bg-linear-to-tr from-primary to-secondary flex items-center justify-center text-white shadow-lg transition-transform duration-300 group-hover:scale-105">
               <Sparkles className="w-5 h-5 text-white animate-pulse" />
             </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-white via-primary/90 to-primary bg-clip-text text-transparent tracking-tight">
+            <span className="text-2xl font-bold bg-linear-to-r from-white via-primary/90 to-primary bg-clip-text text-transparent tracking-tight">
               Form<span className="text-primary font-extrabold">Craft</span>
             </span>
           </Link>
         </div>
 
         {/* Card */}
-        <div className={`relative rounded-2xl bg-card/60 backdrop-blur-md border transition-all duration-500 overflow-hidden p-8 ${currentTheme.glowClass}`}>
+        <div
+          className={`relative rounded-2xl bg-card/60 backdrop-blur-md border transition-all duration-500 overflow-hidden p-8 ${currentTheme.glowClass}`}
+        >
           {/* Card Top Accent Bar */}
-          <div className={`absolute top-0 inset-x-0 h-1 transition-all duration-500`} style={{ backgroundColor: currentTheme.primaryColor }} />
+          <div
+            className={`absolute top-0 inset-x-0 h-1 transition-all duration-500`}
+            style={{ backgroundColor: currentTheme.primaryColor }}
+          />
 
           {/* Title */}
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-2xl font-extrabold tracking-tight text-white font-heading">Sign Up</h2>
-              <p className={`text-xs mt-1 transition-colors duration-500 ${currentTheme.textMutedClass}`}>
+              <h2 className="text-2xl font-extrabold tracking-tight text-white font-heading">
+                Sign Up
+              </h2>
+              <p
+                className={`text-xs mt-1 transition-colors duration-500 ${currentTheme.textMutedClass}`}
+              >
                 Create your form craft guild account
               </p>
             </div>
@@ -193,7 +230,9 @@ export default function SignupPage() {
             <button
               onClick={() => setActiveTheme("naruto")}
               className={`py-1.5 px-2 rounded-md text-xs font-bold transition-all duration-300 flex items-center justify-center gap-1 cursor-pointer ${
-                activeTheme === "naruto" ? "bg-primary/20 text-[#ff6b00] border border-[#ff6b00]/30" : "text-foreground/50 hover:text-foreground"
+                activeTheme === "naruto"
+                  ? "bg-primary/20 text-[#ff6b00] border border-[#ff6b00]/30"
+                  : "text-foreground/50 hover:text-foreground"
               }`}
             >
               <Sparkles className="w-3 h-3" />
@@ -202,7 +241,9 @@ export default function SignupPage() {
             <button
               onClick={() => setActiveTheme("deathnote")}
               className={`py-1.5 px-2 rounded-md text-xs font-bold transition-all duration-300 flex items-center justify-center gap-1 cursor-pointer font-mono ${
-                activeTheme === "deathnote" ? "bg-secondary/20 text-[#990000] border border-[#990000]/30" : "text-foreground/50 hover:text-foreground"
+                activeTheme === "deathnote"
+                  ? "bg-secondary/20 text-[#990000] border border-[#990000]/30"
+                  : "text-foreground/50 hover:text-foreground"
               }`}
             >
               <ShieldAlert className="w-3 h-3" />
@@ -211,7 +252,9 @@ export default function SignupPage() {
             <button
               onClick={() => setActiveTheme("aot")}
               className={`py-1.5 px-2 rounded-md text-xs font-bold transition-all duration-300 flex items-center justify-center gap-1 cursor-pointer ${
-                activeTheme === "aot" ? "bg-accent/20 text-[#2e7d32] border border-[#2e7d32]/30" : "text-foreground/50 hover:text-foreground"
+                activeTheme === "aot"
+                  ? "bg-accent/20 text-[#2e7d32] border border-[#2e7d32]/30"
+                  : "text-foreground/50 hover:text-foreground"
               }`}
             >
               <Swords className="w-3 h-3" />
@@ -321,7 +364,10 @@ export default function SignupPage() {
           <div className="mt-6 pt-4 border-t border-white/5 text-center">
             <p className={`text-xs ${currentTheme.textMutedClass}`}>
               Already have an account?{" "}
-              <Link href="/login" className={`font-bold hover:underline ${currentTheme.accentTextClass}`}>
+              <Link
+                href="/login"
+                className={`font-bold hover:underline ${currentTheme.accentTextClass}`}
+              >
                 Sign In
               </Link>
             </p>
