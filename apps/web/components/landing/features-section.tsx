@@ -26,7 +26,7 @@ function FieldsMockup() {
   const [inputText, setInputText] = useState("Uzumaki Naruto");
 
   return (
-    <div className="w-full h-full bg-card/40 border border-primary/20 rounded-xl p-6 flex flex-col justify-between font-sans shadow-lg shadow-black/30 min-h-[300px]">
+    <div className="w-full h-full bg-card/40 border border-primary/20 rounded-xl p-6 flex flex-col justify-between font-sans shadow-lg shadow-black/30 min-h-75">
       <div className="flex items-center justify-between pb-3 border-b border-primary/10">
         <div className="flex items-center gap-2">
           <Layers className="w-4 h-4 text-primary" />
@@ -37,7 +37,7 @@ function FieldsMockup() {
         </span>
       </div>
 
-      <div className="space-y-4 py-4 flex-grow justify-center flex flex-col">
+      <div className="space-y-4 py-4 grow justify-center flex flex-col">
         {/* Field 1: Name */}
         <div className="space-y-1.5">
           <label className="text-xs font-bold text-foreground/80 flex items-center justify-between">
@@ -145,7 +145,7 @@ function ThemesMockup() {
   const s = getThemeStyles();
 
   return (
-    <div className="w-full h-full bg-card/40 border border-primary/20 rounded-xl p-6 flex flex-col justify-between font-sans shadow-lg shadow-black/30 min-h-[300px]">
+    <div className="w-full h-full bg-card/40 border border-primary/20 rounded-xl p-6 flex flex-col justify-between font-sans shadow-lg shadow-black/30 min-h-75">
       <div className="flex items-center justify-between pb-3 border-b border-primary/10 mb-4">
         <div className="flex items-center gap-1.5">
           <Settings className="w-4 h-4 text-primary" />
@@ -173,7 +173,7 @@ function ThemesMockup() {
 
       {/* Theme Canvas Preview */}
       <div
-        className={`p-4 rounded-lg border transition-all duration-500 flex-grow flex flex-col justify-center ${s.bg}`}
+        className={`p-4 rounded-lg border transition-all duration-500 grow flex flex-col justify-center ${s.bg}`}
       >
         <div className="flex items-center justify-between mb-3">
           <span className={`text-[10px] font-mono font-bold tracking-wider ${s.accentText}`}>
@@ -226,7 +226,7 @@ function AnalyticsMockup() {
   }, []);
 
   return (
-    <div className="w-full h-full bg-card/40 border border-primary/20 rounded-xl p-6 flex flex-col justify-between font-sans shadow-lg shadow-black/30 min-h-[300px]">
+    <div className="w-full h-full bg-card/40 border border-primary/20 rounded-xl p-6 flex flex-col justify-between font-sans shadow-lg shadow-black/30 min-h-75">
       <div className="flex items-center justify-between pb-3 border-b border-primary/10 mb-4">
         <div className="flex items-center gap-1.5">
           <BarChart3 className="w-4 h-4 text-primary" />
@@ -253,7 +253,7 @@ function AnalyticsMockup() {
       </div>
 
       {/* Mock Analytics Chart */}
-      <div className="flex-grow flex flex-col justify-end bg-[#060913]/40 border border-primary/10 rounded-lg p-3 min-h-[100px]">
+      <div className="grow flex flex-col justify-end bg-[#060913]/40 border border-primary/10 rounded-lg p-3 min-h-25">
         <div className="flex items-end justify-between gap-2 h-20 px-2">
           {/* Bar 1 */}
           <div className="flex-1 flex flex-col items-center gap-1.5">
@@ -300,7 +300,7 @@ function ShareMockup() {
   };
 
   return (
-    <div className="w-full h-full bg-card/40 border border-primary/20 rounded-xl p-6 flex flex-col justify-between font-sans shadow-lg shadow-black/30 min-h-[300px]">
+    <div className="w-full h-full bg-card/40 border border-primary/20 rounded-xl p-6 flex flex-col justify-between font-sans shadow-lg shadow-black/30 min-h-75">
       <div className="flex items-center justify-between pb-3 border-b border-primary/10 mb-4">
         <div className="flex items-center gap-1.5">
           <Share2 className="w-4 h-4 text-primary" />
@@ -311,11 +311,11 @@ function ShareMockup() {
         </span>
       </div>
 
-      <div className="flex-grow flex flex-col justify-center gap-4">
+      <div className="grow flex flex-col justify-center gap-4">
         <div className="space-y-1.5">
           <span className="text-xs font-bold text-foreground/80 block">Public Link</span>
           <div className="flex bg-[#060913]/60 border border-primary/20 rounded-lg p-1 items-center justify-between">
-            <span className="text-xs font-mono text-primary/95 px-2 select-all overflow-hidden text-ellipsis whitespace-nowrap max-w-[200px]">
+            <span className="text-xs font-mono text-primary/95 px-2 select-all overflow-hidden text-ellipsis whitespace-nowrap max-w-50">
               {shareUrl}
             </span>
             <Button
@@ -368,7 +368,7 @@ function ShieldMockup() {
   };
 
   return (
-    <div className="w-full h-full bg-card/40 border border-primary/20 rounded-xl p-6 flex flex-col justify-between font-sans shadow-lg shadow-black/30 min-h-[300px]">
+    <div className="w-full h-full bg-card/40 border border-primary/20 rounded-xl p-6 flex flex-col justify-between font-sans shadow-lg shadow-black/30 min-h-75">
       <div className="flex items-center justify-between pb-3 border-b border-primary/10 mb-4">
         <div className="flex items-center gap-1.5">
           <Shield className="w-4 h-4 text-secondary animate-pulse" />
@@ -378,12 +378,12 @@ function ShieldMockup() {
       </div>
 
       {isLocked ? (
-        <div className="flex-grow flex flex-col justify-center items-center gap-3 py-4">
+        <div className="grow flex flex-col justify-center items-center gap-3 py-4">
           <KeyRound className="w-10 h-10 text-secondary animate-bounce" />
           <span className="text-xs font-bold text-center text-foreground/90">
             This form is protected by L
           </span>
-          <div className="flex gap-2 w-full max-w-[200px]">
+          <div className="flex gap-2 w-full max-w-50">
             <input
               type="password"
               placeholder="Type 'apple' to unlock"
@@ -404,7 +404,7 @@ function ShieldMockup() {
           </span>
         </div>
       ) : (
-        <div className="flex-grow flex flex-col justify-center gap-3 py-2">
+        <div className="grow flex flex-col justify-center gap-3 py-2">
           <div className="flex items-center gap-2.5 bg-green-500/10 border border-green-500/20 p-2.5 rounded-lg text-green-400">
             <Check className="w-4 h-4" />
             <span className="text-xs font-bold">Security Cleared — Form Open</span>
@@ -467,7 +467,9 @@ function BroadcastsMockup() {
       const newEmail = {
         id: Date.now(),
         name: names[Math.floor(Math.random() * names.length)] || "Levi Ackerman",
-        subject: subjects[Math.floor(Math.random() * subjects.length)] || "Survey Corps Registration details",
+        subject:
+          subjects[Math.floor(Math.random() * subjects.length)] ||
+          "Survey Corps Registration details",
         time: "Just Now",
       };
       setEmails((prev) => {
@@ -480,7 +482,7 @@ function BroadcastsMockup() {
   }, []);
 
   return (
-    <div className="w-full h-full bg-card/40 border border-primary/20 rounded-xl p-6 flex flex-col justify-between font-sans shadow-lg shadow-black/30 min-h-[300px]">
+    <div className="w-full h-full bg-card/40 border border-primary/20 rounded-xl p-6 flex flex-col justify-between font-sans shadow-lg shadow-black/30 min-h-75">
       <div className="flex items-center justify-between pb-3 border-b border-primary/10 mb-4">
         <div className="flex items-center gap-1.5">
           <Mail className="w-4 h-4 text-accent animate-pulse" />
@@ -491,14 +493,14 @@ function BroadcastsMockup() {
         </span>
       </div>
 
-      <div className="flex-grow space-y-3 justify-center flex flex-col">
+      <div className="grow space-y-3 justify-center flex flex-col">
         <span className="text-xs font-bold text-foreground/80 block">Inbox Notifications</span>
 
         <div className="space-y-2">
           {emails.slice(0, 2).map((email) => (
             <div
               key={email.id}
-              className="bg-[#060913]/60 border-l-2 border-accent border-y border-r border-accent/10 p-2.5 rounded-r-md transition-all duration-500 hover:bg-[#060913]/90 relative overflow-hidden"
+              className="bg-[#060913]/60 border-l-2 border-accent/10 border-y border-r p-2.5 rounded-r-md transition-all duration-500 hover:bg-[#060913]/90 relative overflow-hidden"
             >
               <div className="flex items-center justify-between mb-1">
                 <span className="text-[10px] font-bold text-accent">{email.name}</span>
@@ -557,15 +559,15 @@ export function FeaturesSection() {
 
   return (
     <section id="features" className="py-24 relative overflow-hidden border-t border-primary/5">
-      <div className="absolute inset-y-0 right-0 w-[400px] bg-secondary/3 blur-[120px] pointer-events-none rounded-full" />
-      <div className="absolute bottom-0 left-0 w-[450px] bg-primary/3 blur-[150px] pointer-events-none rounded-full" />
+      <div className="absolute inset-y-0 right-0 w-100 bg-secondary/3 blur-[120px] pointer-events-none rounded-full" />
+      <div className="absolute bottom-0 left-0 w-112.5 bg-primary/3 blur-[150px] pointer-events-none rounded-full" />
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl relative z-10">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-20 scroll-animate">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-5 tracking-tight leading-tight">
             Form Building at a{" "}
-            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
               Championship Level
             </span>
           </h2>
@@ -618,7 +620,7 @@ export function FeaturesSection() {
                 </div>
 
                 {/* Mockup Side */}
-                <div className="flex-1 w-full max-w-lg lg:max-w-none relative aspect-[4/3] rounded-2xl p-1 bg-gradient-to-tr from-primary/15 via-secondary/10 to-accent/15 group shadow-2xl hover:scale-[1.01] transition-transform duration-300">
+                <div className="flex-1 w-full max-w-lg lg:max-w-none relative aspect-4/3 rounded-2xl p-1 bg-linear-to-tr from-primary/15 via-secondary/10 to-accent/15 group shadow-2xl hover:scale-[1.01] transition-transform duration-300">
                   <div className="absolute inset-0 bg-black/40 backdrop-blur-xs rounded-2xl z-0" />
                   <div className="relative z-10 w-full h-full rounded-2xl bg-[#060913]/90 overflow-hidden p-2 flex items-center justify-center">
                     {getMockup(feature.id)}

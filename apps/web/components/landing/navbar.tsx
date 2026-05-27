@@ -45,10 +45,10 @@ export function Navbar() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="relative w-8 h-8 rounded-lg bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-white shadow-[0_0_15px_rgba(255,107,0,0.3)] group-hover:scale-105 transition-transform duration-300">
+          <div className="relative w-8 h-8 rounded-lg bg-linear-to-tr from-primary to-secondary flex items-center justify-center text-white shadow-[0_0_15px_rgba(255,107,0,0.3)] group-hover:scale-105 transition-transform duration-300">
             <Sparkles className="w-5 h-5 text-white animate-pulse-fast" />
           </div>
-          <span className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-white via-primary/90 to-primary bg-clip-text text-transparent tracking-tight">
+          <span className="text-xl sm:text-2xl font-bold bg-linear-to-r from-white via-primary/90 to-primary bg-clip-text text-transparent tracking-tight">
             Form<span className="text-primary font-extrabold tracking-normal">Craft</span>
           </span>
         </Link>
@@ -130,10 +130,10 @@ export function Navbar() {
               <div className="space-y-8 mt-8">
                 {/* Mobile Logo */}
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-white">
+                  <div className="w-8 h-8 rounded-lg bg-linear-to-tr from-primary to-secondary flex items-center justify-center text-white">
                     <Sparkles className="w-5 h-5 text-white" />
                   </div>
-                  <span className="text-2xl font-bold bg-gradient-to-r from-white via-primary/90 to-primary bg-clip-text text-transparent">
+                  <span className="text-2xl font-bold bg-linear-to-r from-white via-primary/90 to-primary bg-clip-text text-transparent">
                     Form<span className="text-primary font-extrabold">Craft</span>
                   </span>
                 </div>

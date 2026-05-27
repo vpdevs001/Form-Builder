@@ -21,7 +21,7 @@ export function HeroSection() {
       <div className="absolute inset-0 z-0 pointer-events-none opacity-40">
         <div className="absolute top-[20%] left-[15%] w-96 h-96 rounded-full bg-primary/10 blur-[100px] animate-pulse" />
         <div className="absolute bottom-[20%] right-[15%] w-96 h-96 rounded-full bg-secondary/15 blur-[120px] animate-pulse" />
-        <div className="absolute top-[40%] right-[30%] w-[500px] h-[500px] rounded-full bg-accent/5 blur-[150px]" />
+        <div className="absolute top-[40%] right-[30%] w-125 h-125 rounded-full bg-accent/5 blur-[150px]" />
       </div>
 
       {/* Floating Anime Image Elements */}
@@ -85,7 +85,7 @@ export function HeroSection() {
         {/* Giant Headline */}
         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-center tracking-tight leading-[1.1] max-w-5xl mb-8">
           Build Forms That Feel Like an{" "}
-          <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent filter drop-shadow-[0_2px_20px_rgba(255,107,0,0.2)]">
+          <span className="bg-linear-to-r from-primary via-secondary to-accent bg-clip-text text-transparent filter drop-shadow-[0_2px_20px_rgba(255,107,0,0.2)]">
             Anime Adventure
           </span>
         </h1>
@@ -95,7 +95,8 @@ export function HeroSection() {
           Ditch those plain, clinical surveys. Instantly craft legendary forms with customizable{" "}
           <span className="text-primary font-semibold">Naruto</span>,{" "}
           <span className="text-secondary font-semibold">Death Note</span>, and{" "}
-          <span className="text-accent font-semibold">Attack on Titan</span> visual themes. 100% free, no jutsu required.
+          <span className="text-accent font-semibold">Attack on Titan</span> visual themes. 100%
+          free, no jutsu required.
         </p>
 
         {/* CTAs */}
@@ -116,16 +117,18 @@ export function HeroSection() {
         </div>
 
         {/* Hero Visual Mockup */}
-        <div className="relative w-full max-w-5xl aspect-[16/10] sm:aspect-[16/9] rounded-2xl border border-primary/20 bg-card/60 backdrop-blur-sm overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] group scroll-animate transition-all duration-1000">
+        <div className="relative w-full max-w-5xl aspect-16/10 sm:aspect-video rounded-2xl border border-primary/20 bg-card/60 backdrop-blur-sm overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] group scroll-animate transition-all duration-1000">
           {/* Neon outline glowing header */}
-          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary via-secondary to-accent z-20" />
-          
+          <div className="absolute inset-x-0 top-0 h-1 bg-linear-to-r from-primary via-secondary to-accent z-20" />
+
           {/* Glass header buttons */}
           <div className="absolute top-4 left-6 flex items-center gap-2 z-20">
             <div className="w-3.5 h-3.5 rounded-full bg-[#ff5f56]" />
             <div className="w-3.5 h-3.5 rounded-full bg-[#ffbd2e]" />
             <div className="w-3.5 h-3.5 rounded-full bg-[#27c93f]" />
-            <span className="text-xs text-foreground/40 font-mono ml-4 select-none">formcraft.io/templates/hidden-leaf-exam</span>
+            <span className="text-xs text-foreground/40 font-mono ml-4 select-none">
+              formcraft.io/templates/hidden-leaf-exam
+            </span>
           </div>
 
           <div className="absolute inset-0 z-0">
@@ -139,7 +142,7 @@ export function HeroSection() {
           </div>
 
           {/* Absolute decorative overlay representing the tool editor grid */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#060913] via-transparent to-black/30 pointer-events-none" />
+          <div className="absolute inset-0 bg-linear-to-t from-[#060913] via-transparent to-black/30 pointer-events-none" />
         </div>
 
         {/* Bouncing scroll indicator */}

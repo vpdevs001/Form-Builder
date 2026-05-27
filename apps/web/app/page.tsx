@@ -7,6 +7,7 @@ import { HowItWorksSection } from "~/components/landing/how-it-works-section";
 import { CTASection } from "~/components/landing/cta-section";
 import { Footer } from "~/components/landing/footer";
 import { ScrollWrapper } from "~/components/landing/client-wrapper";
+import PricingSection from "~/components/landing/pricing-section";
 
 export default async function Home() {
   // Gracefully fetch server status; fallback if API isn't fully initialized
@@ -39,7 +40,10 @@ export default async function Home() {
         {/* 4. How It Works Section */}
         <HowItWorksSection />
 
-        {/* 5. CTA Section */}
+        {/* 5. Pricing Section */}
+        <PricingSection />
+
+        {/* 6. CTA Section */}
         <CTASection />
       </main>
 
@@ -47,13 +51,14 @@ export default async function Home() {
 
       {/* Subtle Dynamic API Server Health Glow Badge in bottom right */}
       <div className="fixed bottom-4 left-4 z-40 bg-[#060913]/90 border border-primary/20 backdrop-blur-md px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-lg pointer-events-none select-none text-[9px] font-mono font-bold">
-        <span className={`w-1.5 h-1.5 rounded-full ${
-          apiStatus === "Online" ? "bg-green-500 animate-pulse" : "bg-yellow-500 animate-pulse"
-        }`} />
+        <span
+          className={`w-1.5 h-1.5 rounded-full ${
+            apiStatus === "Online" ? "bg-green-500 animate-pulse" : "bg-yellow-500 animate-pulse"
+          }`}
+        />
         <span className="text-foreground/50">SERVER:</span>
         <span className="text-primary">{apiStatus.toUpperCase()}</span>
       </div>
     </>
   );
 }
-
