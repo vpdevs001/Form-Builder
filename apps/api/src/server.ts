@@ -30,11 +30,19 @@ const submissionLimiter = rateLimit({
 app.use("/api/submissions/create", submissionLimiter);
 app.use("/trpc/submission.create", submissionLimiter);
 
-const openApiDocument = generateOpenApiDocument(serverRouter, {
-  title: "Streamyst OpenAPI",
-  version: "1.0.0",
-  baseUrl: env.BASE_URL.concat("/api"),
-});
+let openApiDocument: any = null;
+try {
+  openApiDocument = generateOpenApiDocument(serverRouter, {
+    title: "Streamyst OpenAPI",
+    version: "1.0.0",
+    baseUrl: env.BASE_URL.concat("/api"),
+  });
+} catch (err) {
+  logger.warn(
+    "Failed to generate OpenAPI document (schemas with refinements are not supported)",
+    err,
+  );
+}
 
 if (env.NODE_ENV !== "prod") {
   app.use(
@@ -57,11 +65,16 @@ app.get("/health", (req, res) => {
 
 logger.debug(`openapi.json: ${env.BASE_URL}/openapi.json`);
 app.get("/openapi.json", (req, res) => {
+  if (!openApiDocument) {
+    return res.status(503).json({ error: "OpenAPI document unavailable" });
+  }
   return res.json(openApiDocument);
 });
 
 logger.debug(`docs: ${env.BASE_URL}/docs`);
-app.use("/docs", apiReference({ url: "/openapi.json" }));
+if (openApiDocument) {
+  app.use("/docs", apiReference({ url: "/openapi.json" }));
+}
 
 app.use(
   "/api",

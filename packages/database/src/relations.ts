@@ -1,11 +1,11 @@
 import { relations } from "drizzle-orm";
-import { users } from "./users.model.js";
-import { refreshTokens } from "./refresh-tokens.model.js";
-import { forms } from "./forms.model.js";
-import { formFields } from "./form-fields.model.js";
-import { fieldOptions } from "./field-options.model.js";
-import { submissions } from "./submissions.model.js";
-import { submissionValues } from "./submission-values.model.js";
+import { users } from "./users.model";
+import { refreshTokens } from "./refresh-tokens.model";
+import { forms } from "./forms.model";
+import { formFields } from "./form-fields.model";
+import { fieldOptions } from "./field-options.model";
+import { submissions } from "./submissions.model";
+import { submissionValues } from "./submission-values.model";
 
 export const usersRelations = relations(users, ({ many }) => ({
   forms: many(forms),

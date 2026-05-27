@@ -1,5 +1,5 @@
 import { pgTable, uuid, varchar, text, boolean, timestamp, integer } from "drizzle-orm/pg-core";
-import { users } from "./users.model.js";
+import { users } from "./users.model";
 import { formStatusEnum, visibilityEnum } from "./enums";
 
 export const forms = pgTable("forms", {
@@ -41,7 +41,7 @@ export const forms = pgTable("forms", {
   // Shown after successful submission
   thankYouMessage: text("thank_you_message").default("Thank you for your response!"),
 
-// Theme selection (Naruto, Death Note, Attack On Titan)
+  // Theme selection (Naruto, Death Note, Attack On Titan)
   // Stored as a simple string identifier
   theme: varchar("theme", { length: 30 }).notNull().default("Naruto"),
 

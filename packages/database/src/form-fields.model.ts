@@ -1,5 +1,5 @@
 import { pgTable, uuid, varchar, text, boolean, timestamp, integer } from "drizzle-orm/pg-core";
-import { forms } from "./forms.model.js";
+import { forms } from "./forms.model";
 import { fieldTypeEnum } from "./enums";
 
 export const formFields = pgTable("form_fields", {
@@ -19,7 +19,7 @@ export const formFields = pgTable("form_fields", {
   isRequired: boolean("is_required").default(false).notNull(),
 
   fieldOrder: integer("field_order").notNull(),
-  
+
   defaultValue: text("default_value"),
 
   // JSON string for Zod validation rules, varies by field type:

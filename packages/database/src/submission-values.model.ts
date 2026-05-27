@@ -1,6 +1,6 @@
 import { pgTable, uuid, text, timestamp } from "drizzle-orm/pg-core";
-import { submissions } from "./submissions.model.js";
-import { formFields } from "./form-fields.model.js";
+import { submissions } from "./submissions.model";
+import { formFields } from "./form-fields.model";
 
 export const submissionValues = pgTable("submission_values", {
   id: uuid("id").defaultRandom().primaryKey(),

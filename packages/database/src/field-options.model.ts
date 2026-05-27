@@ -1,5 +1,5 @@
 import { pgTable, uuid, varchar, integer, timestamp } from "drizzle-orm/pg-core";
-import { formFields } from "./form-fields.model.js";
+import { formFields } from "./form-fields.model";
 
 // Only used for SINGLE_SELECT, MULTI_SELECT, DROPDOWN fields
 export const fieldOptions = pgTable("field_options", {
@@ -13,7 +13,7 @@ export const fieldOptions = pgTable("field_options", {
   value: varchar("value", { length: 255 }).notNull(),
 
   optionOrder: integer("option_order").notNull(),
-  
+
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

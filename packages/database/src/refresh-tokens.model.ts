@@ -1,5 +1,5 @@
 import { pgTable, uuid, text, timestamp } from "drizzle-orm/pg-core";
-import { users } from "./users.model.js";
+import { users } from "./users.model";
 
 export const refreshTokens = pgTable("refresh_tokens", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -9,7 +9,7 @@ export const refreshTokens = pgTable("refresh_tokens", {
     .notNull(),
 
   token: text("token").unique().notNull(),
-  
+
   expiresAt: timestamp("expires_at").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
