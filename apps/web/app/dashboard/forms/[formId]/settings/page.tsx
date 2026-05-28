@@ -219,7 +219,7 @@ export default function FormSettingsPage() {
 
           {form ? (
             <section className="bg-card/30 border border-primary/10 rounded-2xl p-6">
-              <h2 className="text-lg font-semibold mb-2">Share link</h2>
+              <h2 className="text-lg font-semibold mb-2">Share your form</h2>
               <p className="text-sm text-foreground/60 mb-3 font-mono break-all">
                 {typeof window !== "undefined" ? `${window.location.origin}/forms/${form.shareId}` : `/forms/${form.shareId}`}
               </p>
@@ -238,9 +238,9 @@ export default function FormSettingsPage() {
 
           {form ? (
             <section className="bg-card/30 border border-red-500/20 rounded-2xl p-6">
-              <h2 className="text-lg font-semibold mb-2 text-red-300">Danger zone</h2>
+              <h2 className="text-lg font-semibold mb-2 text-red-300">Remove form</h2>
               <p className="text-sm text-foreground/60 mb-4">
-                Permanently delete this form and its responses.
+                Permanently remove this form and its responses.
               </p>
               <Button
                 type="button"

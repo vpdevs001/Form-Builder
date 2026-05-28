@@ -45,7 +45,9 @@ export default function FormBuilderPage() {
   const { user, loading, isAuthenticated } = useAuth();
 
   const [form, setForm] = useState<Awaited<ReturnType<typeof api.form.getById.query>> | null>(null);
-  const [fields, setFields] = useState<Awaited<ReturnType<typeof api.formField.getByFormId.query>>>([]);
+  const [fields, setFields] = useState<Awaited<ReturnType<typeof api.formField.getByFormId.query>>>(
+    [],
+  );
   const [label, setLabel] = useState("");
   const [placeholder, setPlaceholder] = useState("");
   const [helpText, setHelpText] = useState("");
@@ -92,8 +94,7 @@ export default function FormBuilderPage() {
   }, [loading, isAuthenticated, user, formId, router]);
 
   const canHaveOptions = useMemo(
-    () =>
-      ["SINGLE_SELECT", "MULTI_SELECT", "CHECKBOX", "DROPDOWN"].includes(fieldType),
+    () => ["SINGLE_SELECT", "MULTI_SELECT", "CHECKBOX", "DROPDOWN"].includes(fieldType),
     [fieldType],
   );
 
@@ -158,7 +159,9 @@ export default function FormBuilderPage() {
     }
   };
 
-  const beginEditField = (field: Awaited<ReturnType<typeof api.formField.getByFormId.query>>[number]) => {
+  const beginEditField = (
+    field: Awaited<ReturnType<typeof api.formField.getByFormId.query>>[number],
+  ) => {
     setEditingFieldId(field.id);
     setEditLabel(field.label);
     setEditHelpText(field.helpText || "");
@@ -170,7 +173,9 @@ export default function FormBuilderPage() {
 
   const saveEditedField = async () => {
     if (!editingFieldId) return;
-    const optionCapable = ["SINGLE_SELECT", "MULTI_SELECT", "CHECKBOX", "DROPDOWN"].includes(editFieldType);
+    const optionCapable = ["SINGLE_SELECT", "MULTI_SELECT", "CHECKBOX", "DROPDOWN"].includes(
+      editFieldType,
+    );
     const optionList = optionCapable
       ? editOptions
           .split(",")
@@ -232,8 +237,8 @@ export default function FormBuilderPage() {
         <div className="bg-card/30 border border-primary/10 rounded-2xl p-6">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
-              <p className="text-xs uppercase tracking-wider text-primary font-bold">Question builder</p>
-              <h1 className="text-2xl font-bold mt-1">{form?.title || "Form builder"}</h1>
+              <p className="text-xs uppercase tracking-wider text-primary font-bold">Form editor</p>
+              <h1 className="text-2xl font-bold mt-1">{form?.title || "Form editor"}</h1>
               <p className="text-sm text-foreground/60 mt-1">
                 Theme: {form?.theme} • {fields.length} question{fields.length === 1 ? "" : "s"}
               </p>
@@ -354,8 +359,12 @@ export default function FormBuilderPage() {
                           {index + 1}. {field.label}
                         </p>
                         <div className="flex flex-wrap gap-2 mt-2">
-                          <Badge variant="outline">{FIELD_TYPE_LABELS[field.fieldType as FieldType]}</Badge>
-                          {field.isRequired ? <Badge className="bg-red-500/15 text-red-300">Required</Badge> : null}
+                          <Badge variant="outline">
+                            {FIELD_TYPE_LABELS[field.fieldType as FieldType]}
+                          </Badge>
+                          {field.isRequired ? (
+                            <Badge className="bg-red-500/15 text-red-300">Required</Badge>
+                          ) : null}
                         </div>
                         {field.helpText ? (
                           <p className="text-xs text-foreground/50 mt-2">{field.helpText}</p>
@@ -413,7 +422,9 @@ export default function FormBuilderPage() {
                           </option>
                         ))}
                       </select>
-                      {["SINGLE_SELECT", "MULTI_SELECT", "CHECKBOX", "DROPDOWN"].includes(editFieldType) ? (
+                      {["SINGLE_SELECT", "MULTI_SELECT", "CHECKBOX", "DROPDOWN"].includes(
+                        editFieldType,
+                      ) ? (
                         <Input
                           value={editOptions}
                           onChange={(e) => setEditOptions(e.target.value)}

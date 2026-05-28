@@ -1,4 +1,3 @@
-import { api } from "~/trpc/server";
 import { Navbar } from "~/components/landing/navbar";
 import { HeroSection } from "~/components/landing/hero-section";
 import { FeaturesSection } from "~/components/landing/features-section";
@@ -9,17 +8,7 @@ import { Footer } from "~/components/landing/footer";
 import { ScrollWrapper } from "~/components/landing/client-wrapper";
 import PricingSection from "~/components/landing/pricing-section";
 
-export default async function Home() {
-  // Gracefully fetch server status; fallback if API isn't fully initialized
-  let apiStatus = "Offline";
-  try {
-    const res = await api.health.getHealth.query();
-    apiStatus = res.status || "Online";
-  } catch (err) {
-    console.error("tRPC health check failed during build:", err);
-    apiStatus = "Degraded";
-  }
-
+export default function Home() {
   return (
     <>
       {/* Client Scroll Observer Hook */}
@@ -48,17 +37,6 @@ export default async function Home() {
       </main>
 
       <Footer />
-
-      {/* Subtle Dynamic API Server Health Glow Badge in bottom right */}
-      <div className="fixed bottom-4 left-4 z-40 bg-[#060913]/90 border border-primary/20 backdrop-blur-md px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-lg pointer-events-none select-none text-[9px] font-mono font-bold">
-        <span
-          className={`w-1.5 h-1.5 rounded-full ${
-            apiStatus === "Online" ? "bg-green-500 animate-pulse" : "bg-yellow-500 animate-pulse"
-          }`}
-        />
-        <span className="text-foreground/50">SERVER:</span>
-        <span className="text-primary">{apiStatus.toUpperCase()}</span>
-      </div>
     </>
   );
 }

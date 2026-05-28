@@ -17,12 +17,18 @@ export default function FormResponsesPage() {
   const { user, loading, isAuthenticated } = useAuth();
 
   const [form, setForm] = useState<Awaited<ReturnType<typeof api.form.getById.query>> | null>(null);
-  const [summary, setSummary] = useState<Awaited<ReturnType<typeof api.analytics.getFormSummary.query>> | null>(null);
-  const [submissions, setSubmissions] = useState<Awaited<ReturnType<typeof api.submission.getByFormId.query>>>([]);
+  const [summary, setSummary] = useState<Awaited<
+    ReturnType<typeof api.analytics.getFormSummary.query>
+  > | null>(null);
+  const [submissions, setSubmissions] = useState<
+    Awaited<ReturnType<typeof api.submission.getByFormId.query>>
+  >([]);
   const [fieldBreakdown, setFieldBreakdown] = useState<
     Awaited<ReturnType<typeof api.analytics.getFieldBreakdown.query>>
   >([]);
-  const [trend, setTrend] = useState<Awaited<ReturnType<typeof api.analytics.getSubmissionTrend.query>>>([]);
+  const [trend, setTrend] = useState<
+    Awaited<ReturnType<typeof api.analytics.getSubmissionTrend.query>>
+  >([]);
   const [selectedFieldId, setSelectedFieldId] = useState<string>("");
   const [selectedFieldValues, setSelectedFieldValues] = useState<
     Awaited<ReturnType<typeof api.submissionValue.getByFieldId.query>>
@@ -39,13 +45,15 @@ export default function FormResponsesPage() {
 
     const load = async () => {
       try {
-        const [formData, summaryData, submissionData, breakdownData, trendData] = await Promise.all([
-          api.form.getById.query({ id: formId }),
-          api.analytics.getFormSummary.query({ formId }),
-          api.submission.getByFormId.query({ id: formId }),
-          api.analytics.getFieldBreakdown.query({ formId }),
-          api.analytics.getSubmissionTrend.query({ formId, interval: "DAY" }),
-        ]);
+        const [formData, summaryData, submissionData, breakdownData, trendData] = await Promise.all(
+          [
+            api.form.getById.query({ id: formId }),
+            api.analytics.getFormSummary.query({ formId }),
+            api.submission.getByFormId.query({ id: formId }),
+            api.analytics.getFieldBreakdown.query({ formId }),
+            api.analytics.getSubmissionTrend.query({ formId, interval: "DAY" }),
+          ],
+        );
         if (user && formData.creatorId !== user.id) {
           toast.error("You do not have access to this form.");
           router.push("/dashboard");
@@ -76,8 +84,8 @@ export default function FormResponsesPage() {
     }
     let active = true;
     setLoadingValues(true);
-    api.submissionValue
-      .getByFieldId.query({ fieldId: selectedFieldId })
+    api.submissionValue.getByFieldId
+      .query({ fieldId: selectedFieldId })
       .then((values) => {
         if (active) setSelectedFieldValues(values);
       })
@@ -92,10 +100,7 @@ export default function FormResponsesPage() {
     };
   }, [selectedFieldId]);
 
-  const trendTotal = useMemo(
-    () => trend.reduce((acc, point) => acc + point.count, 0),
-    [trend],
-  );
+  const trendTotal = useMemo(() => trend.reduce((acc, point) => acc + point.count, 0), [trend]);
 
   const exportSummaryCsv = () => {
     if (!summary || !form) return;
@@ -107,7 +112,10 @@ export default function FormResponsesPage() {
       ["Accepts Responses", summary.acceptsResponses ? "Yes" : "No"],
       ["Is Expired", summary.isExpired ? "Yes" : "No"],
       ["Response Limit", summary.responseLimit ? String(summary.responseLimit) : "None"],
-      ["Responses Remaining", summary.responsesRemaining ? String(summary.responsesRemaining) : "Unlimited"],
+      [
+        "Responses Remaining",
+        summary.responsesRemaining ? String(summary.responsesRemaining) : "Unlimited",
+      ],
       ["First Submission", summary.firstSubmissionAt || "N/A"],
       ["Last Submission", summary.lastSubmissionAt || "N/A"],
       ["Published At", summary.publishedAt || "N/A"],
@@ -195,19 +203,19 @@ export default function FormResponsesPage() {
           <div className="mt-4 flex flex-wrap gap-2">
             <Button variant="outline" onClick={exportSummaryCsv}>
               <Download className="w-4 h-4 mr-1" />
-              Export summary
+              Download summary
             </Button>
             <Button variant="outline" onClick={exportSubmissionsCsv}>
               <Download className="w-4 h-4 mr-1" />
-              Export submissions
+              Download responses
             </Button>
             <Button variant="outline" onClick={exportBreakdownCsv}>
               <Download className="w-4 h-4 mr-1" />
-              Export breakdown
+              Download breakdown
             </Button>
             <Button className="bg-primary" onClick={exportAllCsv} disabled={exporting}>
               <Download className="w-4 h-4 mr-1" />
-              Export all CSV
+              Download all data
             </Button>
           </div>
         </div>
@@ -227,9 +235,7 @@ export default function FormResponsesPage() {
           </div>
           <div className="bg-card/30 border border-primary/10 rounded-xl p-4">
             <p className="text-sm text-foreground/60">Responses remaining</p>
-            <p className="text-2xl font-bold">
-              {summary?.responsesRemaining ?? "∞"}
-            </p>
+            <p className="text-2xl font-bold">{summary?.responsesRemaining ?? "∞"}</p>
           </div>
         </div>
 
@@ -240,11 +246,16 @@ export default function FormResponsesPage() {
           </h2>
           {trend.length > 0 ? (
             <div className="space-y-2">
-              <p className="text-sm text-foreground/60">Total points: {trend.length} • Total submissions: {trendTotal}</p>
+              <p className="text-sm text-foreground/60">
+                Total points: {trend.length} • Total submissions: {trendTotal}
+              </p>
               {trend.slice(-10).map((point) => (
                 <div key={point.period} className="flex items-center gap-2">
                   <p className="w-28 text-xs text-foreground/60">{point.period}</p>
-                  <div className="h-2 rounded bg-primary/80" style={{ width: `${Math.max(point.count * 20, 8)}px` }} />
+                  <div
+                    className="h-2 rounded bg-primary/80"
+                    style={{ width: `${Math.max(point.count * 20, 8)}px` }}
+                  />
                   <span className="text-xs text-foreground/70">{point.count}</span>
                 </div>
               ))}
@@ -257,7 +268,7 @@ export default function FormResponsesPage() {
         <div className="bg-card/30 border border-primary/10 rounded-xl p-6">
           <h2 className="text-lg font-semibold mb-4">Field breakdown</h2>
           <div className="mb-4">
-            <label className="text-xs text-foreground/60 block mb-1">Inspect raw values for field</label>
+            <label className="text-xs text-foreground/60 block mb-1">View field responses</label>
             <select
               value={selectedFieldId}
               onChange={(e) => setSelectedFieldId(e.target.value)}
@@ -279,7 +290,9 @@ export default function FormResponsesPage() {
                 Raw values fetched via `submissionValue.getByFieldId`: {selectedFieldValues.length}
               </p>
             ) : (
-              <p className="text-sm text-foreground/60">Select a field to inspect raw value rows.</p>
+              <p className="text-sm text-foreground/60">
+                Select a field to inspect raw value rows.
+              </p>
             )}
           </div>
           <div className="space-y-4">
@@ -291,7 +304,10 @@ export default function FormResponsesPage() {
                 </p>
                 <div className="space-y-2">
                   {field.topValues.slice(0, 5).map((value) => (
-                    <div key={`${field.fieldId}-${value.value}`} className="flex justify-between text-sm">
+                    <div
+                      key={`${field.fieldId}-${value.value}`}
+                      className="flex justify-between text-sm"
+                    >
                       <span className="text-foreground/75">{value.value || "(empty)"}</span>
                       <span className="text-foreground/50">{value.count}</span>
                     </div>

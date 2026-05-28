@@ -1,8 +1,9 @@
 services:
+  # PostgreSQL Database
   postgresdb:
     image: postgres:15
     restart: unless-stopped
-    container_name: postgresdb
+    container_name: form-builder-db
 
     environment:
       POSTGRES_USER: postgres
@@ -15,5 +16,78 @@ services:
     volumes:
       - pg_data:/var/lib/postgresql/data
 
+    networks:
+      - form-builder-network
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # API Backend Service
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: form-builder-api
+    restart: unless-stopped
+
+    environment:
+      NODE_ENV: production
+      PORT: 8000
+      BASE_URL: http://api:8000
+      DATABASE_URL: postgresql://postgres:postgres@postgresdb:5432/dev
+
+    ports:
+      - "8000:8000"
+
+    networks:
+      - form-builder-network
+
+    depends_on:
+      postgresdb:
+        condition: service_healthy
+
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Web Frontend Service
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    container_name: form-builder-web
+    restart: unless-stopped
+
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: http://api:8000
+
+    ports:
+      - "3000:3000"
+
+    networks:
+      - form-builder-network
+
+    depends_on:
+      api:
+        condition: service_healthy
+
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
 volumes:
   pg_data:
+
+networks:
+  form-builder-network:
+    driver: bridge

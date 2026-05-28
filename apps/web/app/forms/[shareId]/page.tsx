@@ -173,7 +173,7 @@ export default function FillFormPage() {
 
   return (
     <div className={cn("min-h-screen text-foreground relative overflow-hidden", theme.bg)}>
-      <div className={cn("absolute inset-0 bg-gradient-to-br pointer-events-none", theme.glow)} />
+      <div className={cn("absolute inset-0 bg-linear-to-br pointer-events-none", theme.glow)} />
       <div className="absolute top-8 right-4 w-28 h-28 opacity-20 pointer-events-none hidden sm:block">
         <Image src={theme.decorImage} alt="" fill className="object-contain" aria-hidden />
       </div>

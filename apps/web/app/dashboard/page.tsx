@@ -19,9 +19,7 @@ import { Input } from "~/components/ui/input";
 export default function DashboardPage() {
   const router = useRouter();
   const { user, loading, isAuthenticated, logout } = useAuth();
-  const [forms, setForms] = useState<
-    Awaited<ReturnType<typeof api.form.getByCreator.query>>
-  >([]);
+  const [forms, setForms] = useState<Awaited<ReturnType<typeof api.form.getByCreator.query>>>([]);
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<"ALL" | "PUBLIC" | "PRIVATE" | "UNLISTED">("ALL");
 
@@ -55,7 +53,7 @@ export default function DashboardPage() {
     return (
       <div className="min-h-screen bg-[#060913] flex flex-col items-center justify-center">
         <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
-        <p className="text-foreground/60 text-sm font-mono">Verifying your Access Key...</p>
+        <p className="text-foreground/60 text-sm font-mono">Loading your dashboard...</p>
       </div>
     );
   }
@@ -156,7 +154,9 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-extrabold text-white">{publishedCount}</div>
-              <p className="text-xs text-foreground/45 mt-1 font-medium">Live and accepting traffic</p>
+              <p className="text-xs text-foreground/45 mt-1 font-medium">
+                Live and accepting traffic
+              </p>
             </CardContent>
           </Card>
           <Card className="bg-card/30 backdrop-blur-sm border border-primary/10 hover:border-accent/20 transition-all shadow-[0_4px_20px_rgba(0,0,0,0.2)]">
@@ -170,22 +170,20 @@ export default function DashboardPage() {
               <div className="text-3xl font-extrabold text-white">
                 {forms.length > 0 ? Math.round((publishedCount / forms.length) * 100) : 0}%
               </div>
-              <p className="text-xs text-foreground/45 mt-1 font-medium">
-                Published form ratio
-              </p>
+              <p className="text-xs text-foreground/45 mt-1 font-medium">Published form ratio</p>
             </CardContent>
           </Card>
           <Card className="bg-card/30 backdrop-blur-sm border border-primary/10 hover:border-primary/20 transition-all shadow-[0_4px_20px_rgba(0,0,0,0.2)]">
             <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
               <CardTitle className="text-sm font-bold text-foreground/60 font-heading">
-                API Access
+                Workspace status
               </CardTitle>
               <Settings className="w-4 h-4 text-primary" />
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-extrabold text-emerald-500">Active</div>
               <p className="text-xs text-foreground/45 mt-1 font-medium">
-                Scalar credentials verified
+                Everything is running smoothly
               </p>
             </CardContent>
           </Card>
@@ -218,9 +216,7 @@ export default function DashboardPage() {
                 <div className="p-4 rounded-full bg-primary/5 border border-primary/10 mb-4 animate-float-medium">
                   <FileText className="w-8 h-8 text-primary" />
                 </div>
-                <h3 className="text-lg font-extrabold text-white mb-2">
-                  No forms found
-                </h3>
+                <h3 className="text-lg font-extrabold text-white mb-2">No forms found</h3>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -253,7 +249,7 @@ export default function DashboardPage() {
                         onClick={() => router.push(`/dashboard/forms/${f.id}/builder`)}
                         className="bg-primary"
                       >
-                        Builder
+                        Edit
                       </Button>
                       <Button
                         size="sm"

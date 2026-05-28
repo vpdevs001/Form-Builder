@@ -58,7 +58,7 @@ export default function NewFormPage() {
       <div className="max-w-2xl mx-auto bg-card/30 border border-primary/10 rounded-xl p-6">
         <h1 className="text-2xl font-bold mb-2">Create a new form</h1>
         <p className="text-sm text-foreground/60 mb-6">
-          After creating this form, you can add questions one by one from the builder page.
+          After creating this form, you can add questions one by one in the editor.
         </p>
         <form onSubmit={onSubmit} className="space-y-4">
           <div className="space-y-2">

@@ -10,7 +10,8 @@ export function HowItWorksSection() {
       number: "01",
       title: "Design Layout",
       subtitle: "CREATE",
-      description: "Build your questions with our simple visual creator. Choose text inputs, dropdown selections, slider evaluations, and required checkpoints.",
+      description:
+        "Build your questions with our simple visual creator. Choose text inputs, dropdown selections, slider evaluations, and required checkpoints.",
       icon: <PlusCircle className="w-6 h-6 text-[#ff6b00]" />,
       accentColor: "border-[#ff6b00]/30 hover:border-[#ff6b00]/70",
       glowBg: "bg-[#ff6b00]/5",
@@ -22,7 +23,8 @@ export function HowItWorksSection() {
       number: "02",
       title: "Anime Synthesis",
       subtitle: "CUSTOMIZE",
-      description: "Choose a theme to skin your form. Set security guardrails with submission limits, passwords, and custom notify mailers.",
+      description:
+        "Choose a theme to skin your form. Set security guardrails with submission limits, passwords, and custom notifications.",
       icon: <Palette className="w-6 h-6 text-[#990000]" />,
       accentColor: "border-[#990000]/30 hover:border-[#990000]/70",
       glowBg: "bg-[#990000]/5",
@@ -34,7 +36,8 @@ export function HowItWorksSection() {
       number: "03",
       title: "Deploy & Track",
       subtitle: "SHARE",
-      description: "Publish with a single click. Broadcast your form link, copy raw embed code, and view live analytics charts as responses flood in.",
+      description:
+        "Publish with a single click. Share your form link and watch live analytics as responses roll in.",
       icon: <Share2 className="w-6 h-6 text-[#2e7d32]" />,
       accentColor: "border-[#2e7d32]/30 hover:border-[#2e7d32]/70",
       glowBg: "bg-[#2e7d32]/5",
@@ -46,8 +49,8 @@ export function HowItWorksSection() {
 
   return (
     <section id="how-it-works" className="py-24 relative overflow-hidden border-t border-primary/5">
-      {/* Decorative gradients */}
-      <div className="absolute top-[40%] right-[-10%] w-[300px] h-[300px] rounded-full bg-primary/2 blur-[100px] pointer-events-none" />
+      {/* Decorative linears */}
+      <div className="absolute top-[40%] right-[-10%] w-75 h-75 rounded-full bg-primary/2 blur-[100px] pointer-events-none" />
 
       {/* Decorative anime background images */}
       <div className="absolute top-[10%] left-[-3%] w-40 h-40 opacity-[0.06] pointer-events-none select-none hidden lg:block">
@@ -72,22 +75,25 @@ export function HowItWorksSection() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl relative z-10">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-20 scroll-animate">
-          <span className="text-xs font-bold text-primary tracking-widest uppercase mb-3 block">Simple Execution</span>
+          <span className="text-xs font-bold text-primary tracking-widest uppercase mb-3 block">
+            Simple Execution
+          </span>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-5 tracking-tight leading-tight">
             How It{" "}
-            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
               Works
             </span>
           </h2>
           <p className="text-base sm:text-lg text-foreground/75 leading-relaxed font-medium">
-            FormCraft synthesizes complex backend capabilities into an intuitive 3-step creation loop. Build, customize, and share without writing any code.
+            FormCraft turns every step into an intuitive 3-part creation loop. Build, customize, and
+            share with confidence.
           </p>
         </div>
 
         {/* 3 Step List with Connections */}
         <div className="relative">
           {/* Horizontal connectors (Desktop only) */}
-          <div className="absolute top-[65px] left-[15%] right-[15%] h-0.5 border-t-2 border-dashed border-primary/15 z-0 hidden lg:block" />
+          <div className="absolute top-16.25 left-[15%] right-[15%] h-0.5 border-t-2 border-dashed border-primary/15 z-0 hidden lg:block" />
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 relative z-10">
             {steps.map((step, idx) => {
@@ -108,7 +114,9 @@ export function HowItWorksSection() {
                   </div>
 
                   {/* Circle Step Number Badge */}
-                  <div className={`w-14 h-14 rounded-full flex items-center justify-center font-extrabold text-lg mb-6 z-10 transition-transform duration-300 group-hover:scale-105 ${step.badgeColor}`}>
+                  <div
+                    className={`w-14 h-14 rounded-full flex items-center justify-center font-extrabold text-lg mb-6 z-10 transition-transform duration-300 group-hover:scale-105 ${step.badgeColor}`}
+                  >
                     {step.number}
                   </div>
 
@@ -143,19 +151,27 @@ function featureHighlights(idx: number, desc: string) {
   if (idx === 0) {
     return (
       <>
-        Build your questions with our simple <span className="text-white font-semibold">visual creator</span>. Choose text inputs, dropdown selections, <span className="text-white font-semibold">slider evaluations</span>, and required checkpoints.
+        Build your questions with our simple{" "}
+        <span className="text-white font-semibold">visual creator</span>. Choose text inputs,
+        dropdown selections, <span className="text-white font-semibold">slider evaluations</span>,
+        and required checkpoints.
       </>
     );
   } else if (idx === 1) {
     return (
       <>
-        Choose a theme to skin your form. Set <span className="text-white font-semibold">security guardrails</span> with submission limits, <span className="text-white font-semibold">passwords</span>, and custom notify mailers.
+        Choose a theme to skin your form. Set{" "}
+        <span className="text-white font-semibold">security guardrails</span> with submission
+        limits, <span className="text-white font-semibold">passwords</span>, and custom notify
+        mailers.
       </>
     );
   } else {
     return (
       <>
-        Publish with a <span className="text-white font-semibold">single click</span>. Broadcast your form link, copy raw embed code, and view <span className="text-white font-semibold">live analytics charts</span> as responses flood in.
+        Publish with a <span className="text-white font-semibold">single click</span>. Share your
+        form link and view <span className="text-white font-semibold">live analytics</span> as
+        responses roll in.
       </>
     );
   }

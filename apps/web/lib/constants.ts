@@ -43,7 +43,7 @@ export const FEATURES: Feature[] = [
       "Craft questions that collect exactly what you need. From standard text and email fields to star ratings, dropdown choices, and secure date pickers.",
     imagePath: "/images/feature_fields.png",
     details: [
-      "Built-in schema validation on backend",
+      "Built-in form validation",
       "Interactive slider & rating inputs",
       "Required field checks & customized placeholders",
     ],
@@ -82,7 +82,7 @@ export const FEATURES: Feature[] = [
     badge: "Seamless Distribution",
     badgeColor: "orange",
     description:
-      "Deploy your forms instantly to the web. Get a short, dedicated sharing link and clean embed codes to collect data anywhere in the shinobi world.",
+      "Deploy your forms instantly to the web. Get a short, dedicated sharing link and easy sharing controls so your audience can respond wherever they are.",
     imagePath: "/images/feature_share.png",
     details: [
       "One-click publish and unpublish controls",
@@ -115,7 +115,7 @@ export const FEATURES: Feature[] = [
     details: [
       "Instant email notifications for form owners",
       "Customizable respondent receipt emails",
-      "Reliable backend mail system integration",
+      "Reliable email notifications",
     ],
   },
 ];

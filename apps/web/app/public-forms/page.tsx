@@ -60,7 +60,7 @@ export default function PublicFormsPage() {
                   <p className="text-sm text-foreground/60 mb-2">{f.description}</p>
                   <div className="flex items-center justify-between">
                     <span className="text-xs text-foreground/50">
-                      By {f.creatorName || f.creatorId}
+                      By {f.creatorName || "Creator"}
                     </span>
                     <Button size="sm" onClick={() => router.push(`/forms/${f.shareId}`)}>
                       View

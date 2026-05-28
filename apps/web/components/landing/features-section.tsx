@@ -230,7 +230,7 @@ function AnalyticsMockup() {
       <div className="flex items-center justify-between pb-3 border-b border-primary/10 mb-4">
         <div className="flex items-center gap-1.5">
           <BarChart3 className="w-4 h-4 text-primary" />
-          <span className="text-xs font-mono text-foreground/60">Live Analytics Panel</span>
+          <span className="text-xs font-mono text-foreground/60">Live response insights</span>
         </div>
         <span className="w-2 h-2 rounded-full bg-green-500 animate-ping" />
       </div>
@@ -572,8 +572,8 @@ export function FeaturesSection() {
             </span>
           </h2>
           <p className="text-base sm:text-lg text-foreground/75 leading-relaxed font-medium">
-            Explore advanced technical capabilities that empower you to launch beautiful forms, keep
-            entries secure, and extract visual insights with high-performance features.
+            Explore powerful features that help you launch beautiful forms, keep entries secure, and
+            uncover visual insights.
           </p>
         </div>
 

@@ -18,8 +18,9 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "FormCraft — Anime-Themed Form Builder",
-  description: "Craft beautiful, themed forms with Naruto, Death Note, and Attack on Titan aesthetics. Choose from 10+ field types, real-time analytics, and instant publishing.",
+  title: "FormCraft — Anime-Themed Form Experience",
+  description:
+    "Craft beautiful, themed forms with Naruto, Death Note, and Attack on Titan aesthetics. Choose from 10+ field types, real-time analytics, and instant publishing.",
 };
 
 export default function RootLayout({
@@ -29,10 +30,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} ${outfit.variable} antialiased`}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} ${outfit.variable} antialiased`}
+      >
         <GlobalProviders>{children}</GlobalProviders>
       </body>
     </html>
   );
 }
-
