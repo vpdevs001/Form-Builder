@@ -1,18 +1,44 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, ChevronDown, Sparkles, Wand2 } from "lucide-react";
+import { ArrowRight, ChevronDown, Sparkles } from "lucide-react";
 import { Button } from "~/components/ui/button";
 
+const HERO_IMAGES = [
+  { src: "/images/hero-1.png", alt: "Anime-styled form preview - scene 1" },
+  { src: "/images/hero-2.png", alt: "Anime-styled form preview - scene 2" },
+  { src: "/images/hero-3.png", alt: "Anime-styled form preview - scene 3" },
+];
+
 export function HeroSection() {
+  const [current, setCurrent] = useState(0);
+  const [prev, setPrev] = useState<number | null>(null);
+  const [sliding, setSliding] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPrev(current);
+      setSliding(true);
+      setCurrent((c) => (c + 1) % HERO_IMAGES.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [current]);
+
+  // Reset sliding state after animation completes
+  useEffect(() => {
+    if (!sliding) return;
+    const t = setTimeout(() => {
+      setPrev(null);
+      setSliding(false);
+    }, 600); // matches transition duration
+    return () => clearTimeout(t);
+  }, [sliding]);
+
   const handleScrollToFeatures = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    const element = document.querySelector("#features");
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
+    document.querySelector("#features")?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
@@ -26,7 +52,6 @@ export function HeroSection() {
 
       {/* Floating Anime Image Elements */}
       <div className="absolute inset-0 z-0 pointer-events-none select-none">
-        {/* Floating Naruto Rasengan */}
         <div className="absolute top-[22%] left-[6%] animate-float-slow hidden lg:block opacity-60">
           <div className="relative w-24 h-24 filter drop-shadow-[0_0_25px_rgba(255,107,0,0.5)]">
             <Image
@@ -37,8 +62,6 @@ export function HeroSection() {
             />
           </div>
         </div>
-
-        {/* Floating Death Note Apple */}
         <div className="absolute bottom-[28%] left-[8%] animate-float-medium hidden lg:block opacity-55">
           <div className="relative w-16 h-16 filter drop-shadow-[0_0_20px_rgba(153,0,0,0.6)]">
             <Image
@@ -49,8 +72,6 @@ export function HeroSection() {
             />
           </div>
         </div>
-
-        {/* Floating AoT Wings of Freedom Emblem */}
         <div className="absolute top-[18%] right-[6%] animate-float-fast hidden lg:block opacity-45">
           <div className="relative w-28 h-28 filter drop-shadow-[0_0_20px_rgba(46,125,50,0.4)]">
             <Image
@@ -61,8 +82,6 @@ export function HeroSection() {
             />
           </div>
         </div>
-
-        {/* Additional floating Rasengan — bottom right for balance */}
         <div className="absolute bottom-[22%] right-[10%] animate-float-slow hidden lg:block opacity-30">
           <div className="relative w-14 h-14 filter drop-shadow-[0_0_15px_rgba(255,107,0,0.3)]">
             <Image
@@ -116,46 +135,77 @@ export function HeroSection() {
           </Button>
         </div>
 
-        {/* Hero Visual Mockup */}
+        {/* Hero Visual Mockup — sliding carousel */}
         <div className="relative w-full max-w-5xl aspect-16/10 sm:aspect-video rounded-2xl border border-primary/20 bg-card/60 backdrop-blur-sm overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] group scroll-animate transition-all duration-1000">
-            {/* Neon outline glowing header */}
-            <div className="absolute inset-x-0 top-0 h-1 bg-linear-to-r from-primary via-secondary to-accent z-20" />
+          {/* Neon outline glowing header */}
+          <div className="absolute inset-x-0 top-0 h-1 bg-linear-to-r from-primary via-secondary to-accent z-20" />
 
-            {/* Glass header buttons */}
-            <div className="absolute top-4 left-6 flex items-center gap-2 z-20">
-              <div className="w-3.5 h-3.5 rounded-full bg-[#ff5f56]" />
-              <div className="w-3.5 h-3.5 rounded-full bg-[#ffbd2e]" />
-              <div className="w-3.5 h-3.5 rounded-full bg-[#27c93f]" />
-              <span className="text-xs text-foreground/40 font-mono ml-4 select-none">
-                formcraft.io/templates/hidden-leaf-exam
-              </span>
-            </div>
+          {/* Glass header buttons */}
+          <div className="absolute top-4 left-6 flex items-center gap-2 z-20">
+            <div className="w-3.5 h-3.5 rounded-full bg-[#ff5f56]" />
+            <div className="w-3.5 h-3.5 rounded-full bg-[#ffbd2e]" />
+            <div className="w-3.5 h-3.5 rounded-full bg-[#27c93f]" />
+            <span className="text-xs text-foreground/40 font-mono ml-4 select-none">
+              formcraft.io/templates/hidden-leaf-exam
+            </span>
+          </div>
 
-            <div className="absolute inset-0 z-0">
+          {/* Outgoing slide (exits to left) */}
+          {sliding && prev !== null && (
+            <div key={`prev-${prev}`} className="absolute inset-0 z-10 animate-slide-out-left">
               <Image
-                src="/images/hero_visual.png"
-                alt="Anime-styled form preview"
+                src={HERO_IMAGES[prev]!.src}
+                alt={HERO_IMAGES[prev]!.alt}
                 fill
-                priority
-                className="object-cover object-top opacity-90 group-hover:scale-[1.01] transition-transform duration-700 ease-out"
+                className="object-cover object-top opacity-90"
               />
             </div>
+          )}
 
-            {/* Absolute decorative overlay representing the tool editor grid */}
-            <div className="absolute inset-0 bg-linear-to-t from-[#060913] via-transparent to-black/30 pointer-events-none" />
-          </div>
-          {/* Bouncing scroll indicator */}
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              document.querySelector("#features")?.scrollIntoView({ behavior: "smooth" });
-            }}
-            className="mt-16 flex flex-col items-center gap-2 text-foreground/40 hover:text-primary transition-colors group cursor-pointer"
+          {/* Incoming slide (enters from right) */}
+          <div
+            key={`curr-${current}`}
+            className={`absolute inset-0 z-10 ${sliding ? "animate-slide-in-right" : ""}`}
           >
-            <span className="text-xs font-mono tracking-widest uppercase">Scroll Down</span>
-            <ChevronDown className="w-5 h-5 animate-bounce group-hover:translate-y-0.5 transition-transform" />
-          </button>
+            <Image
+              src={HERO_IMAGES[current]!.src}
+              alt={HERO_IMAGES[current]!.alt}
+              fill
+              priority={current === 0}
+              className="object-cover object-top opacity-90 group-hover:scale-[1.01] transition-transform duration-700 ease-out"
+            />
+          </div>
+
+          {/* Slide indicator dots */}
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-30">
+            {HERO_IMAGES.map((_, i) => (
+              <div
+                key={i}
+                className={`h-1.5 rounded-full transition-all duration-500 ${
+                  i === current
+                    ? "w-6 bg-primary shadow-[0_0_8px_rgba(255,107,0,0.8)]"
+                    : "w-1.5 bg-foreground/30"
+                }`}
+              />
+            ))}
+          </div>
+
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 bg-linear-to-t from-[#060913] via-transparent to-black/30 pointer-events-none z-20" />
         </div>
+
+        {/* Bouncing scroll indicator */}
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            document.querySelector("#features")?.scrollIntoView({ behavior: "smooth" });
+          }}
+          className="mt-16 flex flex-col items-center gap-2 text-foreground/40 hover:text-primary transition-colors group cursor-pointer"
+        >
+          <span className="text-xs font-mono tracking-widest uppercase">Scroll Down</span>
+          <ChevronDown className="w-5 h-5 animate-bounce group-hover:translate-y-0.5 transition-transform" />
+        </button>
+      </div>
     </section>
   );
 }

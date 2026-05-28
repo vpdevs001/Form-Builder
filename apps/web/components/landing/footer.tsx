@@ -31,10 +31,10 @@ export function Footer() {
           {/* Brand Column */}
           <div className="lg:col-span-2 space-y-6">
             <Link href="/" className="flex items-center gap-2 group w-max">
-              <div className="relative w-8 h-8 rounded-lg bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-white shadow-[0_0_15px_rgba(255,107,0,0.2)]">
+              <div className="relative w-8 h-8 rounded-lg bg-linear-to-tr from-primary to-secondary flex items-center justify-center text-white shadow-[0_0_15px_rgba(255,107,0,0.2)]">
                 <Sparkles className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-white via-primary/90 to-primary bg-clip-text text-transparent">
+              <span className="text-xl sm:text-2xl font-bold bg-linear-to-r from-white via-primary/90 to-primary bg-clip-text text-transparent">
                 Form<span className="text-primary font-extrabold">Craft</span>
               </span>
             </Link>
