@@ -80,39 +80,44 @@ export function HeroSection() {
         <div className="mb-6 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 animate-pulse text-xs font-semibold text-primary tracking-wider uppercase">
           <Sparkles className="w-3.5 h-3.5" />
           Themed form experience
-          {/* Giant Headline */}
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-center tracking-tight leading-[1.1] max-w-5xl mb-8">
-            Build Forms That Feel Like an{" "}
-            <span className="bg-linear-to-r from-primary via-secondary to-accent bg-clip-text text-transparent filter drop-shadow-[0_2px_20px_rgba(255,107,0,0.2)]">
-              Anime Adventure
-            </span>
-          </h1>
-          {/* Subheadline */}
-          <p className="text-base sm:text-lg md:text-xl text-foreground/75 text-center max-w-3xl mb-10 leading-relaxed font-medium">
-            Ditch those plain, clinical surveys. Instantly craft legendary forms with customizable{" "}
-            <span className="text-primary font-semibold">Naruto</span>,{" "}
-            <span className="text-secondary font-semibold">Death Note</span>, and{" "}
-            <span className="text-accent font-semibold">Attack on Titan</span> visual themes. 100%
-            free, no jutsu required.
-          </p>
-          {/* CTAs */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 w-full max-w-md sm:max-w-none">
-            <Link href="/signup" className="w-full sm:w-auto">
-              <Button className="w-full sm:w-auto bg-primary hover:bg-primary/95 text-white font-extrabold text-base py-6 px-8 rounded-xl shadow-[0_0_20px_rgba(255,107,0,0.4)] hover:shadow-[0_0_30px_rgba(255,107,0,0.6)] hover:scale-[1.02] transition-all duration-300 group">
-                Start Building — It&apos;s Free
-                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </Link>
-            <Button
-              onClick={handleScrollToFeatures}
-              variant="outline"
-              className="w-full sm:w-auto border-foreground/20 hover:border-primary/50 text-foreground/80 hover:text-primary hover:bg-primary/5 font-extrabold text-base py-6 px-8 rounded-xl transition-all duration-300"
-            >
-              Explore Features
+        </div>
+
+        {/* Giant Headline */}
+        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-center tracking-tight leading-[1.1] max-w-5xl mb-8">
+          Build Forms That Feel Like an{" "}
+          <span className="bg-linear-to-r from-primary via-secondary to-accent bg-clip-text text-transparent filter drop-shadow-[0_2px_20px_rgba(255,107,0,0.2)]">
+            Anime Adventure
+          </span>
+        </h1>
+
+        {/* Subheadline */}
+        <p className="text-base sm:text-lg md:text-xl text-foreground/75 text-center max-w-3xl mb-10 leading-relaxed font-medium">
+          Ditch those plain, clinical surveys. Instantly craft legendary forms with customizable{" "}
+          <span className="text-primary font-semibold">Naruto</span>,{" "}
+          <span className="text-secondary font-semibold">Death Note</span>, and{" "}
+          <span className="text-accent font-semibold">Attack on Titan</span> visual themes. 100%
+          free, no jutsu required.
+        </p>
+
+        {/* CTAs */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 w-full max-w-md sm:max-w-none">
+          <Link href="/signup" className="w-full sm:w-auto">
+            <Button className="w-full sm:w-auto bg-primary hover:bg-primary/95 text-white font-extrabold text-base py-6 px-8 rounded-xl shadow-[0_0_20px_rgba(255,107,0,0.4)] hover:shadow-[0_0_30px_rgba(255,107,0,0.6)] hover:scale-[1.02] transition-all duration-300 group">
+              Start Building — It&apos;s Free
+              <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
-          </div>
-          {/* Hero Visual Mockup */}
-          <div className="relative w-full max-w-5xl aspect-16/10 sm:aspect-video rounded-2xl border border-primary/20 bg-card/60 backdrop-blur-sm overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] group scroll-animate transition-all duration-1000">
+          </Link>
+          <Button
+            onClick={handleScrollToFeatures}
+            variant="outline"
+            className="w-full sm:w-auto border-foreground/20 hover:border-primary/50 text-foreground/80 hover:text-primary hover:bg-primary/5 font-extrabold text-base py-6 px-8 rounded-xl transition-all duration-300"
+          >
+            Explore Features
+          </Button>
+        </div>
+
+        {/* Hero Visual Mockup */}
+        <div className="relative w-full max-w-5xl aspect-16/10 sm:aspect-video rounded-2xl border border-primary/20 bg-card/60 backdrop-blur-sm overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] group scroll-animate transition-all duration-1000">
             {/* Neon outline glowing header */}
             <div className="absolute inset-x-0 top-0 h-1 bg-linear-to-r from-primary via-secondary to-accent z-20" />
 
@@ -151,7 +156,6 @@ export function HeroSection() {
             <ChevronDown className="w-5 h-5 animate-bounce group-hover:translate-y-0.5 transition-transform" />
           </button>
         </div>
-      </div>
     </section>
   );
 }
